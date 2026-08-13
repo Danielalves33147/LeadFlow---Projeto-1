@@ -1,0 +1,9 @@
+:root {
+  --lf-color-navy-900:#0B1F3A; --lf-color-navy-800:#122E52; --lf-color-primary:#1D4ED8; --lf-color-primary-hover:#1E40AF; --lf-color-primary-pressed:#1E3A8A; --lf-color-primary-subtle:#EFF6FF;
+  --lf-color-success:#15803D; --lf-color-success-subtle:#DCFCE7; --lf-color-warning:#B45309; --lf-color-warning-subtle:#FEF3C7; --lf-color-danger:#B91C1C; --lf-color-danger-subtle:#FEE2E2; --lf-color-info:#0369A1; --lf-color-info-subtle:#E0F2FE;
+  --lf-color-text-primary:#0F172A; --lf-color-text-secondary:#475569; --lf-color-text-tertiary:#64748B; --lf-color-border-subtle:#E2E8F0; --lf-color-border-control:#64748B; --lf-color-canvas:#F5F7FA; --lf-color-surface:#FFFFFF; --lf-color-surface-muted:#F8FAFC;
+  --lf-radius-sm:4px; --lf-radius-md:6px; --lf-radius-lg:8px; --lf-radius-pill:999px;
+  --lf-space-1:4px; --lf-space-2:8px; --lf-space-3:12px; --lf-space-4:16px; --lf-space-5:20px; --lf-space-6:24px; --lf-space-8:32px; --lf-space-10:40px; --lf-space-12:48px; --lf-space-16:64px;
+  --lf-shadow-1:0 1px 2px rgba(15,23,42,.06); --lf-shadow-2:0 6px 18px rgba(15,23,42,.10); --lf-shadow-3:0 18px 40px rgba(15,23,42,.16);
+  --lf-sidebar:264px; --lf-topbar:64px;
+}

@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: LeadFlow API
+  version: 1.0.0
+  description: API REST do CRM B2B LeadFlow.
+servers:
+  - url: http://localhost:8080/api/v1
+security:
+  - bearerAuth: []
+paths:
+  /auth/login:
+    post:
+      security: []
+      summary: Autenticar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email,password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '200': { description: Autenticação concluída }
+        '401': { description: Credenciais inválidas }
+  /auth/register:
+    post:
+      security: []
+      summary: Criar empresa e administrador inicial
+      responses:
+        '200': { description: Conta criada }
+  /dashboard:
+    get:
+      summary: Obter visão geral autorizada
+      responses:
+        '200': { description: Indicadores e gráficos }
+  /leads:
+    get:
+      summary: Listar Leads com filtros e paginação
+      responses: { '200': { description: Página de Leads } }
+    post:
+      summary: Criar Lead
+      responses: { '200': { description: Lead criado } }
+  /leads/{id}:
+    get:
+      summary: Obter Lead
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer, format: int64 } }]
+      responses: { '200': { description: Lead } }
+    put:
+      summary: Editar Lead
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer, format: int64 } }]
+      responses: { '200': { description: Lead atualizado } }
+  /leads/{id}/stage:
+    patch:
+      summary: Alterar etapa e registrar histórico
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer, format: int64 } }]
+      responses: { '200': { description: Etapa atualizada } }
+  /interactions:
+    get: { summary: Listar interações, responses: { '200': { description: Página de interações } } }
+    post: { summary: Registrar interação e aplicar pontuação, responses: { '200': { description: Interação registrada } } }
+  /tasks:
+    get: { summary: Listar tarefas, responses: { '200': { description: Página de tarefas } } }
+    post: { summary: Criar tarefa, responses: { '200': { description: Tarefa criada } } }
+  /branches:
+    get: { summary: Listar filiais e métricas, responses: { '200': { description: Filiais } } }
+    post: { summary: Criar filial, responses: { '200': { description: Filial criada } } }
+  /users:
+    get: { summary: Listar equipe, responses: { '200': { description: Usuários } } }
+    post: { summary: Criar usuário, responses: { '200': { description: Usuário criado } } }
+  /score-rules:
+    get: { summary: Listar regras, responses: { '200': { description: Regras } } }
+    post: { summary: Criar regra, responses: { '200': { description: Regra criada } } }
+  /ranking/branches:
+    get: { summary: Ranking de filiais, responses: { '200': { description: Ranking } } }
+  /notifications:
+    get: { summary: Listar notificações, responses: { '200': { description: Notificações } } }
+  /settings:
+    get: { summary: Consultar configurações, responses: { '200': { description: Configurações } } }
+    put: { summary: Atualizar configurações, responses: { '200': { description: Configurações atualizadas } } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
