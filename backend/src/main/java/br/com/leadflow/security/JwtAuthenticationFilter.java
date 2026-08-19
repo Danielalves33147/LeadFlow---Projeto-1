@@ -4,7 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
@@ -22,20 +25,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith("Bearer ") && SecurityContextHolder.getContext().getAuthentication() == null) {
-            try {
-                JwtService.TokenClaims claims = jwtService.validate(header.substring(7));
-                LeadFlowPrincipal principal = userDetailsService.loadById(claims.userId());
-                if (principal.isEnabled()) {
-                    var auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+        if (header != null && header.startsWith("Bearer ") && SecurityContextHolder.getContext()
+            .getAuthentication() == null) {
+                try {
+                    JwtService
+                        .TokenClaims claims = jwtService
+                        .validate(header
+                        .substring(7));
+                    LeadFlowPrincipal principal = userDetailsService
+                        .loadById(claims
+                        .userId());
+                    if (principal
+                        .isEnabled()) {
+                            var auth = new UsernamePasswordAuthenticationToken(principal, null, principal
+                                .getAuthorities());
+                            SecurityContextHolder
+                                .getContext()
+                                .setAuthentication(auth);
+                        }
+                } catch (RuntimeException ignored) {
+                    SecurityContextHolder
+                        .clearContext();
                 }
-            } catch (RuntimeException ignored) {
-                SecurityContextHolder.clearContext();
             }
-        }
-        filterChain.doFilter(request, response);
+        filterChain
+            .doFilter(request, response);
     }
 }

@@ -9,10 +9,17 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+
     @Bean
     OpenAPI leadFlowOpenApi() {
-        return new OpenAPI()
-            .info(new Info().title("LeadFlow API").version("1.0.0").description("API REST do CRM B2B LeadFlow"))
-            .components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+
+            return new OpenAPI()
+            .info(new Info()
+            .title("LeadFlow API")
+            .version("1.0.0")
+            .description("API REST do CRM B2B LeadFlow"))
+            .components(new Components()
+            .addSecuritySchemes("bearerAuth", new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
     }
 }

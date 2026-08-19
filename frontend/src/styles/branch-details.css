@@ -1,0 +1,382 @@
+.lf-branch-detail-page {
+  height: calc(100vh - var(--lf-topbar) - 64px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lf-branch-detail-page .lf-page-header {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+
+.lf-branch-detail-page .lf-page-title {
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.lf-branch-detail-page .lf-page-description {
+  margin-top: 2px;
+}
+
+.lf-branch-detail-page .lf-page-actions {
+  gap: 8px;
+}
+
+.lf-branch-detail-page .lf-period-select {
+  width: 128px;
+  min-width: 128px;
+}
+
+.lf-branch-detail-layout {
+  --lf-branch-ranking-heading: 38px;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(245px, 0.8fr) minmax(620px, 2.28fr) minmax(270px, 0.94fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.lf-branch-team-column,
+.lf-branch-kpi-column,
+.lf-branch-analytics-grid {
+  min-height: 0;
+}
+
+.lf-branch-team-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.lf-branch-column-heading {
+  flex: 0 0 var(--lf-branch-ranking-heading);
+  padding: 0 2px 7px;
+  box-sizing: border-box;
+}
+
+.lf-branch-column-heading h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.lf-branch-column-heading p {
+  margin: 2px 0 0;
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--lf-color-text-tertiary);
+}
+
+.lf-branch-team-stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.lf-branch-team-card {
+  min-height: 0;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  box-shadow: none;
+}
+
+.lf-branch-team-card.is-first {
+  border-color: #93c5fd;
+}
+
+.lf-branch-team-position {
+  font-size: 19px;
+  line-height: 1;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.lf-branch-team-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lf-branch-team-info strong {
+  font-size: 11px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lf-branch-team-info span {
+  font-size: 9px;
+  line-height: 12px;
+  color: var(--lf-color-text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lf-branch-team-points {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  white-space: nowrap;
+  color: var(--lf-color-success);
+}
+
+.lf-branch-team-points strong {
+  font-size: 11px;
+}
+
+.lf-branch-team-points span {
+  font-size: 8px;
+}
+
+.lf-branch-team-empty {
+  grid-row: 1 / span 2;
+  padding: 14px;
+  font-size: 11px;
+  color: var(--lf-color-text-tertiary);
+}
+
+.lf-branch-analytics-grid {
+  margin-top: var(--lf-branch-ranking-heading);
+  height: calc(100% - var(--lf-branch-ranking-heading));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.lf-branch-analytic-card {
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 15px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lf-branch-analytic-card .lf-card-title {
+  flex: 0 0 auto;
+  font-size: 13px;
+  line-height: 18px;
+  margin-bottom: 7px;
+}
+
+.lf-branch-chart-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lf-branch-analytic-card .lf-chart {
+  height: 100%;
+  min-height: 0;
+}
+
+.lf-branch-analytic-card .lf-donut-wrap {
+  min-height: 0;
+  height: 100%;
+  gap: 16px;
+  justify-content: center;
+}
+
+.lf-branch-analytic-card .lf-donut {
+  width: clamp(108px, 8.4vw, 136px);
+  height: clamp(108px, 8.4vw, 136px);
+}
+
+.lf-branch-analytic-card .lf-donut::after {
+  inset: 24px;
+}
+
+.lf-branch-analytic-card .lf-donut-center {
+  font-size: 16px;
+}
+
+.lf-branch-analytic-card .lf-legend {
+  gap: 5px;
+  font-size: 10px;
+}
+
+.lf-branch-analytic-card .lf-legend-dot {
+  width: 7px;
+  height: 7px;
+}
+
+.lf-branch-bars-slot {
+  display: flex;
+  align-items: center;
+}
+
+.lf-branch-analytic-card .lf-bar-list {
+  width: 100%;
+  gap: 7px;
+}
+
+.lf-branch-analytic-card .lf-bar-row {
+  grid-template-columns: 92px 1fr 28px;
+  gap: 7px;
+  font-size: 10px;
+}
+
+.lf-branch-analytic-card .lf-bar-track {
+  height: 7px;
+}
+
+.lf-branch-kpi-column {
+  margin-top: var(--lf-branch-ranking-heading);
+  height: calc(100% - var(--lf-branch-ranking-heading));
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.lf-branch-kpi-card {
+  min-height: 0;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: minmax(112px, 0.9fr) minmax(120px, 1.1fr);
+  gap: 12px;
+  align-items: stretch;
+  box-shadow: none;
+}
+
+.lf-branch-kpi-primary {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lf-branch-kpi-card .lf-branch-kpi-label {
+  font-size: 10px;
+  line-height: 13px;
+  font-weight: 700;
+  color: var(--lf-color-text-secondary);
+}
+
+.lf-branch-kpi-primary > strong {
+  margin-top: 3px;
+  font-size: 22px;
+  line-height: 25px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lf-branch-kpi-card small {
+  margin-top: 4px;
+  font-size: 9px;
+  line-height: 12px;
+  color: var(--lf-color-text-tertiary);
+}
+
+.lf-branch-kpi-details {
+  min-width: 0;
+  padding-left: 11px;
+  border-left: 1px solid var(--lf-color-border);
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-items: center;
+}
+
+.lf-branch-kpi-details > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  align-items: center;
+  justify-content: start;
+  column-gap: 7px;
+}
+
+.lf-branch-kpi-details > div + div {
+  border-top: 1px solid var(--lf-color-border);
+}
+
+.lf-branch-kpi-details span {
+  min-width: 0;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+  color: var(--lf-color-text-secondary);
+}
+
+.lf-branch-kpi-details strong {
+  margin: 0;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1250px) {
+  .lf-branch-detail-page {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .lf-branch-detail-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+
+  .lf-branch-analytics-grid {
+    margin-top: 0;
+    height: auto;
+  }
+
+  .lf-branch-kpi-column {
+    margin-top: 0;
+    height: auto;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(104px, auto));
+  }
+
+  .lf-branch-kpi-card {
+    grid-template-columns: minmax(105px, 0.9fr) minmax(110px, 1.1fr);
+  }
+
+  .lf-branch-team-stack {
+    grid-template-rows: none;
+    grid-auto-rows: minmax(54px, auto);
+  }
+}
+
+@media (max-width: 900px) {
+  .lf-branch-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-branch-team-column {
+    order: 2;
+  }
+
+  .lf-branch-analytics-grid {
+    order: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .lf-branch-kpi-column {
+    order: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(108px, auto));
+  }
+
+  .lf-branch-kpi-card {
+    grid-template-columns: minmax(110px, 0.9fr) minmax(120px, 1.1fr);
+  }
+
+  .lf-branch-analytic-card {
+    min-height: 250px;
+  }
+}

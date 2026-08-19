@@ -1,0 +1,203 @@
+.lf-score-rules-table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.lf-score-rules-table {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  table-layout: fixed;
+}
+
+.lf-score-rules-table th,
+.lf-score-rules-table td {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.lf-score-rules-table th {
+  white-space: nowrap;
+}
+
+.lf-score-rule-col-name {
+  width: 27%;
+}
+
+.lf-score-rule-col-type {
+  width: 17%;
+}
+
+.lf-score-rule-col-operation {
+  width: 12%;
+}
+
+.lf-score-rule-col-value {
+  width: 9%;
+}
+
+.lf-score-rule-col-status {
+  width: 10%;
+}
+
+.lf-score-rule-col-updated {
+  width: 19%;
+}
+
+.lf-score-rule-col-actions {
+  width: 6%;
+}
+
+.lf-score-rule-name {
+  padding-left: 18px !important;
+  padding-right: 12px !important;
+}
+
+.lf-score-text-column {
+  text-align: left !important;
+}
+
+.lf-score-rules-table th.lf-score-text-column {
+  padding-left: 18px !important;
+}
+
+.lf-score-rules-table td.lf-score-text-column {
+  padding-left: 18px !important;
+}
+
+.lf-score-center {
+  text-align: center !important;
+}
+
+.lf-score-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.lf-score-updated {
+  font-variant-numeric: tabular-nums;
+}
+
+.lf-score-actions-cell {
+  text-align: center;
+  position: relative;
+}
+
+.lf-score-more-button {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--lf-color-text-secondary);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.lf-score-more-button:hover,
+.lf-score-more-button:focus-visible {
+  background: var(--lf-color-surface-muted);
+  color: var(--lf-color-text-primary);
+}
+
+.lf-score-actions-menu {
+  position: fixed;
+  z-index: 220;
+  width: 184px;
+  padding: 6px;
+  border: 1px solid var(--lf-color-border-subtle);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--lf-shadow-2);
+}
+
+.lf-score-actions-menu button {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: transparent;
+  color: var(--lf-color-text-primary);
+  text-align: left;
+  font-size: 13px;
+}
+
+.lf-score-actions-menu button:hover,
+.lf-score-actions-menu button:focus-visible {
+  background: var(--lf-color-surface-muted);
+}
+
+.lf-score-actions-menu .lf-score-menu-danger {
+  color: var(--lf-color-danger);
+}
+
+.lf-score-pagination {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--lf-color-border-subtle);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--lf-color-text-secondary);
+  font-size: 12px;
+}
+
+.lf-score-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 1000px) {
+  .lf-score-rule-col-name {
+    width: 220px;
+  }
+
+  .lf-score-rule-col-type {
+    width: 160px;
+  }
+
+  .lf-score-rule-col-operation,
+  .lf-score-rule-col-value,
+  .lf-score-rule-col-status {
+    width: 110px;
+  }
+
+  .lf-score-rule-col-updated {
+    width: 190px;
+  }
+
+  .lf-score-rule-col-actions {
+    width: 70px;
+  }
+
+  .lf-score-rules-table {
+    width: 100%;
+    min-width: 980px;
+  }
+}
+
+@media (max-width: 640px) {
+  .lf-score-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lf-score-pagination-controls {
+    justify-content: space-between;
+  }
+}

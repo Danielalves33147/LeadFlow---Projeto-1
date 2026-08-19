@@ -21,11 +21,15 @@ import br.com.leadflow.security.LeadFlowPrincipal;
 import br.com.leadflow.security.JwtService;
 import br.com.leadflow.utils.TextUtils;
 import br.com.leadflow.validation.CnpjValidator;
+
+import br.com.leadflow.dto.AuthDTOs.RegisterResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,28 +39,40 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
+
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserDAO userDAO;
     private final CompanyDAO companyDAO;
     private final BranchDAO branchDAO;
+    private final EmailVerificationService emailVerificationService;
     private final UserBranchDAO userBranchDAO;
     private final RefreshTokenDAO refreshTokenDAO;
     private final AccessService accessService;
     private final long refreshExpirationSeconds;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public AuthService(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService,
-                       UserDAO userDAO, CompanyDAO companyDAO, BranchDAO branchDAO, UserBranchDAO userBranchDAO,
-                       RefreshTokenDAO refreshTokenDAO, AccessService accessService,
-                       @Value("${leadflow.jwt.refresh-expiration-seconds}") long refreshExpirationSeconds) {
+    public AuthService(
+        AuthenticationManager authenticationManager,
+        PasswordEncoder passwordEncoder,
+        JwtService jwtService,
+        UserDAO userDAO,
+        CompanyDAO companyDAO,
+        BranchDAO branchDAO,
+        EmailVerificationService emailVerificationService,
+        UserBranchDAO userBranchDAO,
+        RefreshTokenDAO refreshTokenDAO,
+        AccessService accessService,
+        @Value("${leadflow.jwt.refresh-expiration-seconds}") long refreshExpirationSeconds
+    ) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.userDAO = userDAO;
         this.companyDAO = companyDAO;
         this.branchDAO = branchDAO;
+        this.emailVerificationService = emailVerificationService;
         this.userBranchDAO = userBranchDAO;
         this.refreshTokenDAO = refreshTokenDAO;
         this.accessService = accessService;
@@ -64,56 +80,144 @@ public class AuthService {
     }
 
     @Transactional
+    public void verifyEmail(
+        String token
+    ) {
+        emailVerificationService
+            .verify(token);
+    }
+
+    @Transactional
     public AuthResponse login(LoginRequest request) {
         String email = TextUtils.normalizedEmail(request.email());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
         User user = userDAO.findByEmailIgnoreCase(email).orElseThrow();
-        if (user.getStatus() != UserStatus.ACTIVE) throw new BusinessException("ACCOUNT_INACTIVE", "Esta conta está inativa.");
+        if (user.getStatus() != UserStatus.ACTIVE)
+            throw new BusinessException("ACCOUNT_INACTIVE", "Esta conta está inativa.");
         user.setLastLoginAt(Instant.now());
         return issue(user);
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        String email = TextUtils.normalizedEmail(request.email());
-        String cnpj = TextUtils.digits(request.cnpj());
-        if (!CnpjValidator.isValid(cnpj)) throw new BusinessException("INVALID_CNPJ", "Informe um CNPJ válido.");
-        validatePassword(request.password());
-        if (userDAO.existsByEmailIgnoreCase(email)) throw new DuplicateResourceException("Já existe uma conta com este e-mail.");
-        if (companyDAO.existsByCnpj(cnpj)) throw new DuplicateResourceException("Já existe uma empresa com este CNPJ.");
+    public RegisterResponse register(
+        RegisterRequest request
+    ) {
+        String email =
+            TextUtils.normalizedEmail(
+                request.email()
+            );
+
+        String cnpj =
+            TextUtils.digits(
+                request.cnpj()
+            );
+
+        if (!CnpjValidator.isValid(cnpj)) {
+            throw new BusinessException(
+                "INVALID_CNPJ",
+                "Informe um CNPJ válido."
+            );
+        }
+
+        validatePassword(
+            request.password()
+        );
+
+        if (
+            userDAO.existsByEmailIgnoreCase(
+                email
+            )
+        ) {
+            throw new DuplicateResourceException(
+                "Já existe uma conta com este e-mail."
+            );
+        }
+
+        if (
+            companyDAO.existsByCnpj(cnpj)
+        ) {
+            throw new DuplicateResourceException(
+                "Já existe uma empresa com este CNPJ."
+            );
+        }
 
         Company company = new Company();
-        company.setName(request.companyName().trim());
+
+        company.setName(
+            request.companyName().trim()
+        );
+
         company.setCnpj(cnpj);
-        company = companyDAO.save(company);
+
+        company =
+            companyDAO.save(company);
 
         Branch branch = new Branch();
-        branch.setName("Filial Principal");
+
+        branch.setName(
+            "Filial Principal"
+        );
+
         branch.setCompany(company);
-        branch = branchDAO.save(branch);
+
+        branch =
+            branchDAO.save(branch);
 
         User admin = new User();
-        admin.setName(request.name().trim());
+
+        admin.setName(
+            request.name().trim()
+        );
+
         admin.setEmail(email);
-        admin.setPasswordHash(passwordEncoder.encode(request.password()));
-        admin.setRole(UserRole.ADMIN);
-        admin.setStatus(UserStatus.ACTIVE);
+
+        admin.setPasswordHash(
+            passwordEncoder.encode(
+                request.password()
+            )
+        );
+
+        admin.setRole(
+            UserRole.ADMIN
+        );
+
+        admin.setStatus(
+            UserStatus.PENDING_EMAIL_VERIFICATION
+        );
+
+        admin.setEmailVerifiedAt(null);
+
         admin.setCompany(company);
         admin.setPrimaryBranch(branch);
-        admin = userDAO.save(admin);
 
-        return issue(admin);
+        admin =
+            userDAO.save(admin);
+
+        emailVerificationService
+            .createVerification(admin);
+
+        return new RegisterResponse(
+            "Cadastro realizado. Confirme seu e-mail para ativar a conta.",
+            admin.getEmail()
+        );
     }
 
     @Transactional
     public AuthResponse refresh(String rawToken) {
-        RefreshToken token = refreshTokenDAO.findByTokenHashAndRevokedFalse(hash(rawToken))
+        RefreshToken token = refreshTokenDAO
+            .findByTokenHashAndRevokedFalse(hash(rawToken))
             .orElseThrow(() -> new BusinessException("INVALID_REFRESH_TOKEN", "Sessão inválida ou expirada."));
-        if (token.getExpiresAt().isBefore(Instant.now()) || token.getUser().getStatus() != UserStatus.ACTIVE) {
-            token.setRevoked(true);
-            throw new BusinessException("INVALID_REFRESH_TOKEN", "Sessão inválida ou expirada.");
-        }
-        token.setRevoked(true);
+        if (token.getExpiresAt()
+            .isBefore(Instant.now()) || token
+            .getUser()
+            .getStatus() != UserStatus
+            .ACTIVE) {
+                token
+                    .setRevoked(true);
+                throw new BusinessException("INVALID_REFRESH_TOKEN", "Sessão inválida ou expirada.");
+            }
+        token
+            .setRevoked(true);
         return issue(token.getUser());
     }
 
@@ -123,7 +227,9 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public AuthUser me() { return toAuthUser(accessService.currentUser()); }
+    public AuthUser me() {
+        return toAuthUser(accessService.currentUser());
+    }
 
     private AuthResponse issue(User user) {
         LeadFlowPrincipal principal = new LeadFlowPrincipal(user);
@@ -140,10 +246,18 @@ public class AuthService {
 
     private AuthUser toAuthUser(User user) {
         var branchIds = accessService.authorizedBranchIds(user);
-        return new AuthUser(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getStatus(),
-            user.getCompany().getId(), user.getCompany().getName(),
-            user.getPrimaryBranch() == null ? null : user.getPrimaryBranch().getId(),
-            user.getPrimaryBranch() == null ? null : user.getPrimaryBranch().getName(), branchIds);
+
+            return new AuthUser(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getStatus(),
+            user.getCompany()
+            .getId(), user
+            .getCompany()
+            .getName(), user
+            .getPrimaryBranch() == null ? null : user
+            .getPrimaryBranch()
+            .getId(), user
+            .getPrimaryBranch() == null ? null : user
+            .getPrimaryBranch()
+            .getName(), branchIds);
     }
 
     private String newRefreshToken() {
@@ -156,15 +270,23 @@ public class AuthService {
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
             return java.util.HexFormat.of().formatHex(digest);
-        } catch (Exception e) { throw new IllegalStateException(e); }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private void validatePassword(String password) {
-        boolean strong = password != null && password.length() >= 8
-            && password.chars().anyMatch(Character::isUpperCase)
-            && password.chars().anyMatch(Character::isLowerCase)
-            && password.chars().anyMatch(Character::isDigit)
-            && password.chars().anyMatch(c -> !Character.isLetterOrDigit(c));
-        if (!strong) throw new BusinessException("WEAK_PASSWORD", "A senha deve ter ao menos 8 caracteres, maiúscula, minúscula, número e símbolo.");
+        boolean strong = password != null && password
+            .length() >= 8 && password
+            .chars()
+            .anyMatch(Character::isUpperCase) && password
+            .chars()
+            .anyMatch(Character::isLowerCase) && password
+            .chars()
+            .anyMatch(Character::isDigit) && password
+            .chars()
+            .anyMatch(c -> !Character.isLetterOrDigit(c));
+        if (!strong)
+            throw new BusinessException("WEAK_PASSWORD", "A senha deve ter ao menos 8 caracteres, maiúscula, minúscula, número e símbolo.");
     }
 }

@@ -1,0 +1,287 @@
+.lf-lead-details {
+  display: grid;
+  gap: 16px;
+}
+
+.lf-lead-details .lf-detail-header {
+  margin-bottom: 0;
+}
+
+.lf-detail-header-expanded {
+  padding: 20px 22px;
+}
+
+.lf-detail-heading {
+  min-width: 260px;
+}
+
+.lf-detail-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lf-detail-name-row h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.lf-detail-info-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 0;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--lf-color-border-subtle);
+}
+
+.lf-detail-info-item {
+  min-width: 0;
+  padding: 0 14px;
+  border-right: 1px solid #eef2f7;
+}
+
+.lf-detail-info-item:first-child {
+  padding-left: 0;
+}
+
+.lf-detail-info-item:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.lf-detail-info-item span,
+.lf-detail-info-item strong {
+  display: block;
+}
+
+.lf-detail-info-item span {
+  margin-bottom: 5px;
+  color: var(--lf-color-text-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.lf-detail-info-item strong {
+  overflow: hidden;
+  color: var(--lf-color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lf-detail-info-email {
+  min-width: 190px;
+}
+
+.lf-detail-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 4px;
+  border: 1px solid var(--lf-color-border-subtle);
+  border-radius: 8px;
+  background: #fff;
+  overflow: visible;
+}
+
+.lf-detail-nav button {
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--lf-color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lf-detail-nav button:hover {
+  background: #f8fafc;
+}
+
+.lf-detail-nav button.active {
+  background: #eff6ff;
+  color: var(--lf-color-primary);
+}
+
+.lf-detail-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.lf-detail-activity-card {
+  min-width: 0;
+}
+
+.lf-detail-scroll-list {
+  max-height: 440px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.lf-detail-scroll-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lf-detail-scroll-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.lf-detail-scroll-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lf-detail-tasks-table .lf-table {
+  min-width: 820px;
+}
+
+.lf-detail-task-actions-head,
+.lf-detail-task-actions-cell {
+  width: 74px;
+  text-align: center !important;
+}
+
+.lf-detail-task-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.lf-detail-task-menu-trigger:hover,
+.lf-detail-task-menu-trigger[aria-expanded='true'] {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+  color: var(--lf-color-primary);
+}
+
+.lf-detail-task-menu {
+  position: fixed;
+  z-index: 250;
+  width: 190px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
+}
+
+.lf-detail-task-menu button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #334155;
+  font-size: 13px;
+  text-align: left;
+}
+
+.lf-detail-task-menu button:hover,
+.lf-detail-task-menu button:focus-visible {
+  background: #f8fafc;
+  color: var(--lf-color-primary);
+}
+
+.lf-detail-reassign-fields {
+  display: grid;
+  gap: 16px;
+}
+
+/*
+ * Padroniza os selects nativos usados nos drawers e modais desta tela.
+ * A seta é desenhada no centro vertical do campo e não depende do ícone
+ * nativo do navegador, que estava aparecendo desalinhado no Windows.
+ */
+.lf-lead-details .lf-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 15px 15px;
+}
+
+.lf-lead-details .lf-select::-ms-expand {
+  display: none;
+}
+
+.lf-lead-details .lf-select:disabled {
+  background-color: #f8fafc;
+}
+
+@media (max-width: 1380px) {
+  .lf-detail-info-grid {
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    row-gap: 16px;
+  }
+
+  .lf-detail-info-item {
+    border-right: 0;
+    padding: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .lf-detail-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-detail-scroll-list {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .lf-detail-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .lf-detail-header-expanded {
+    padding: 16px;
+  }
+
+  .lf-detail-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-detail-actions .lf-btn {
+    width: 100%;
+  }
+
+  .lf-detail-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lf-detail-info-email {
+    grid-column: 1 / -1;
+  }
+}

@@ -5,4 +5,16 @@ import App from './App';
 import { AuthProvider } from './app/AuthContext';
 import { ToastProvider } from './components/ui';
 import './styles/global.css';
-createRoot(document.getElementById('root')!).render(<React.StrictMode><BrowserRouter><AuthProvider><ToastProvider><App/></ToastProvider></AuthProvider></BrowserRouter></React.StrictMode>);
+import './styles/select-controls.css';
+
+createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+);

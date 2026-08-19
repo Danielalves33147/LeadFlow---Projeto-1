@@ -1,0 +1,194 @@
+/*
+ * Selects nativos
+ * Padroniza a seta e mantém o ícone centralizado em todos os formulários,
+ * modais e drawers do sistema.
+ */
+.lf-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M6 8l4 4 4-4' stroke='%23475569' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  padding-right: 40px !important;
+}
+
+.lf-select::-ms-expand {
+  display: none;
+}
+
+.lf-select:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Select pesquisável usado em Lead, Filial e Responsável. */
+.lf-searchable-select {
+  position: relative;
+  width: 100%;
+}
+
+.lf-searchable-select-trigger {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 11px 0 12px;
+  border: 1px solid var(--lf-color-border-control);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--lf-color-text-primary);
+  font-size: 14px;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lf-searchable-select-trigger:hover:not(:disabled) {
+  border-color: #475569;
+}
+
+.lf-searchable-select-trigger:focus-visible,
+.lf-searchable-select-trigger.is-open {
+  outline: 2px solid #bfdbfe;
+  outline-offset: 0;
+  border-color: var(--lf-color-primary);
+}
+
+.lf-searchable-select-trigger:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.lf-searchable-select-trigger > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lf-searchable-select-trigger .is-placeholder {
+  color: #64748b;
+}
+
+.lf-searchable-select-chevron {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  display: block;
+  fill: none;
+  stroke: #475569;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.15s ease;
+}
+
+.lf-searchable-select-trigger.is-open .lf-searchable-select-chevron {
+  transform: rotate(180deg);
+}
+
+.lf-searchable-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 220;
+  overflow: hidden;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+}
+
+.lf-searchable-select-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.lf-searchable-select-search svg {
+  position: absolute;
+  left: 18px;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.lf-searchable-select-search input {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px 0 30px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  color: #0f172a;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+.lf-searchable-select-search input:focus {
+  border-color: var(--lf-color-primary);
+  box-shadow: 0 0 0 2px #dbeafe;
+}
+
+.lf-searchable-select-options {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.lf-searchable-select-option {
+  width: 100%;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #0f172a;
+  font-size: 13px;
+  text-align: left;
+}
+
+.lf-searchable-select-option:hover,
+.lf-searchable-select-option.is-highlighted {
+  background: #f1f5f9;
+}
+
+.lf-searchable-select-option.is-selected {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.lf-searchable-select-option:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.lf-searchable-select-empty {
+  padding: 14px 10px;
+  color: #64748b;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .lf-searchable-select-menu {
+    max-height: 52vh;
+  }
+
+  .lf-searchable-select-options {
+    max-height: 36vh;
+  }
+}
