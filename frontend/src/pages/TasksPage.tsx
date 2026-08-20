@@ -37,6 +37,7 @@ import {
   useToast,
 } from '../components/ui';
 import { TaskForm } from '../components/forms/TaskForm';
+import { useAuth } from '../app/AuthContext';
 import '../styles/tasks.css';
 
 const PAGE_SIZE = 10;
@@ -395,6 +396,7 @@ function dateInputValue(date: Date) {
 
 export function TasksPage() {
   const toast = useToast();
+  const { user } = useAuth();
 
   const [data, setData] = useState<PageResponse<TaskResponse>>({
     content: [],
@@ -437,24 +439,60 @@ export function TasksPage() {
   }, [titleSearch]);
 
   useEffect(() => {
-    Promise.all([
-      branchApi.list(),
-      leadApi.list({ size: 100, sort: 'name,asc' }),
-      userApi.list(),
-    ])
-      .then(([branchList, leadPage, userList]) => {
-        setBranches(branchList);
+    if (!user) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadFilters = async () => {
+      try {
+        const leadPage = await leadApi.list({
+          size: 100,
+          sort: 'name,asc',
+        });
+
+        if (cancelled) {
+          return;
+        }
+
         setLeads(leadPage.content);
+
+        if (user.role === 'SELLER') {
+          setBranches([]);
+          setUsers([]);
+          return;
+        }
+
+        const [branchList, userList] = await Promise.all([
+          branchApi.list(),
+          userApi.list(),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        setBranches(branchList);
         setUsers(userList);
-      })
-      .catch((cause) => {
-        toast.push(
-          'error',
-          'Não foi possível carregar os filtros',
-          (cause as ApiError).message,
+      } catch (cause) {
+        if (cancelled) {
+          return;
+        }
+
+        setError(
+          (cause as ApiError).message ||
+            'Não foi possível carregar os filtros.',
         );
-      });
-  }, [toast]);
+      }
+    };
+
+    void loadFilters();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   const loadList = () => {
     const range = dateRange(dueDate);
@@ -701,27 +739,31 @@ export function TasksPage() {
                 ariaLabel="Filtrar por Lead"
               />
 
-              <SearchableSelect
-                value={responsibleId}
-                placeholder="Todos os responsáveis"
-                options={responsibleOptions}
-                onChange={(value) => {
-                  setResponsibleId(value);
-                  setPage(0);
-                }}
-                ariaLabel="Filtrar por responsável"
-              />
+              {user?.role !== 'SELLER' && (
+                <SearchableSelect
+                  value={responsibleId}
+                  placeholder="Todos os responsáveis"
+                  options={responsibleOptions}
+                  onChange={(value) => {
+                    setResponsibleId(value);
+                    setPage(0);
+                  }}
+                  ariaLabel="Filtrar por responsável"
+                />
+              )}
 
-              <SearchableSelect
-                value={branchId}
-                placeholder="Todas as filiais"
-                options={branchOptions}
-                onChange={(value) => {
-                  setBranchId(value);
-                  setPage(0);
-                }}
-                ariaLabel="Filtrar por filial"
-              />
+              {user?.role !== 'SELLER' && (
+                <SearchableSelect
+                  value={branchId}
+                  placeholder="Todas as filiais"
+                  options={branchOptions}
+                  onChange={(value) => {
+                    setBranchId(value);
+                    setPage(0);
+                  }}
+                  ariaLabel="Filtrar por filial"
+                />
+              )}
 
               <SearchableSelect
                 value={status}
