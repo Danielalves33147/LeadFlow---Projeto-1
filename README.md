@@ -695,6 +695,8 @@ O projeto demonstra, de forma integrada:
 
 # Autores
 
+Michael Delego e Daniel Alves
+
 Projeto desenvolvido para fins acadêmicos.
 
 Repositório:
