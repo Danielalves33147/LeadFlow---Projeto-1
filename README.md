@@ -1,230 +1,708 @@
 # LeadFlow
 
-CRM B2B responsivo para gestão de empresas, filiais, equipes, Leads e desempenho comercial.
+CRM B2B full stack para gestão de **Leads, filiais, equipes, interações, tarefas e desempenho comercial**.
 
-O repositório contém uma implementação full stack com **frontend React/TypeScript** e **backend Java/Spring Boot** organizado nas camadas solicitadas `Controller`, `DAO`, `Model` e `Utils`, complementadas por `Service`, `DTO`, `Security`, `Specification`, validações e tratamento global de erros.
+O LeadFlow foi desenvolvido como projeto acadêmico de **Projeto Integrador**, aplicando conceitos de desenvolvimento web, APIs REST, segurança, banco de dados relacional, controle de acesso por perfil e organização em camadas.
 
-## Arquitetura
+---
+
+## Visão geral
+
+O sistema permite que empresas organizem o fluxo comercial desde a entrada de um Lead até sua conversão, distribuindo responsabilidades entre administradores, gerentes e vendedores.
+
+Entre os principais recursos estão:
+
+- cadastro e autenticação de usuários;
+- confirmação de e-mail;
+- recuperação de senha por código;
+- gestão de Leads;
+- funil de vendas;
+- registro de interações comerciais;
+- sistema de pontuação de Leads;
+- tarefas em lista e calendário;
+- gestão de equipe;
+- gestão de filiais;
+- dashboard com indicadores;
+- ranking de filiais e vendedores;
+- configurações de conta e empresa;
+- controle de acesso baseado em perfil;
+- persistência em PostgreSQL/Supabase;
+- migrations gerenciadas com Flyway.
+
+---
+
+## Funcionalidades
+
+### Autenticação e conta
+
+O sistema possui fluxo completo de autenticação:
+
+- cadastro de usuário;
+- login;
+- confirmação de e-mail;
+- ativação de conta;
+- access token e refresh token;
+- logout;
+- atualização de perfil;
+- alteração de senha;
+- recuperação de senha através de código de 6 dígitos enviado por e-mail.
+
+As senhas são armazenadas utilizando **BCrypt**.
+
+Os refresh tokens são persistidos de forma protegida utilizando hash.
+
+---
+
+### Perfis de acesso
+
+O LeadFlow possui três perfis principais:
+
+| Perfil | Permissões principais |
+|---|---|
+| **Administrador** | Acesso amplo à empresa, equipe, filiais, ranking, regras de pontuação e configurações |
+| **Gerente** | Gestão e acompanhamento das filiais e usuários aos quais possui acesso |
+| **Vendedor** | Gestão dos próprios Leads, interações e tarefas |
+
+O vendedor é direcionado diretamente para a área de **Leads** após o login e não possui acesso ao dashboard administrativo.
+
+As permissões importantes são validadas também no backend.
+
+---
+
+## Gestão de Leads
+
+O módulo de Leads permite:
+
+- cadastrar Leads;
+- editar informações;
+- definir responsável;
+- associar Lead a uma filial;
+- alterar estágio;
+- consultar detalhes;
+- visualizar histórico;
+- pesquisar e filtrar registros;
+- acompanhar última interação;
+- utilizar visualização em tabela;
+- acompanhar o Lead pelo funil comercial.
+
+### Estágios
+
+O fluxo comercial utiliza estágios como:
+
+- Novo;
+- Contatado;
+- Negociação;
+- Cliente;
+- Perdido.
+
+---
+
+## Funil de vendas
+
+O sistema possui uma visualização em formato de funil/Kanban para acompanhar os Leads conforme avançam pelo processo comercial.
+
+Essa visualização facilita a identificação de:
+
+- Leads recém-cadastrados;
+- Leads em contato;
+- negociações em andamento;
+- conversões;
+- oportunidades perdidas.
+
+---
+
+## Interações
+
+As interações representam contatos realizados com os Leads.
+
+É possível registrar informações como:
+
+- Lead;
+- responsável;
+- canal;
+- tipo de interação;
+- observações;
+- pontuação aplicada;
+- data da interação.
+
+As interações podem alterar a pontuação do Lead de acordo com as regras configuradas pela empresa.
+
+---
+
+## Regras de pontuação
+
+Administradores podem configurar regras de pontuação associadas aos tipos de interação.
+
+As operações disponíveis permitem:
+
+- adicionar pontos;
+- subtrair pontos;
+- definir uma pontuação.
+
+As regras podem ser ativadas ou desativadas conforme a estratégia comercial.
+
+---
+
+## Tarefas
+
+O módulo de tarefas possui duas formas de visualização:
+
+### Lista
+
+Permite:
+
+- pesquisar tarefas pelo nome;
+- filtrar por Lead;
+- filtrar por responsável;
+- filtrar por filial;
+- filtrar por status;
+- filtrar por data;
+- criar tarefas;
+- editar tarefas;
+- concluir tarefas;
+- cancelar tarefas;
+- abrir um modal com todos os detalhes.
+
+### Calendário
+
+Permite visualizar as tarefas distribuídas por data e navegar entre os meses.
+
+Também é possível selecionar uma data específica para facilitar a consulta.
+
+---
+
+## Dashboard e indicadores
+
+Administradores e gerentes possuem acesso ao dashboard de desempenho.
+
+Os indicadores respeitam o período selecionado pelo usuário.
+
+Períodos disponíveis:
+
+- 7 dias;
+- 30 dias;
+- 90 dias;
+- 180 dias;
+- 365 dias.
+
+Para melhorar a leitura dos gráficos, os dados são agrupados de acordo com o tamanho do período:
+
+| Período | Agrupamento |
+|---|---|
+| 7 dias | Diário |
+| 30 dias | Semanal |
+| 90 dias | Quinzenal |
+| 180 dias | Mensal |
+| 365 dias | Bimestral |
+
+O período influencia KPIs, evolução, distribuições, rankings e demais indicadores dependentes de tempo.
+
+---
+
+## Ranking
+
+O sistema permite acompanhar desempenho comercial através de rankings.
+
+Entre os dados analisados estão:
+
+- desempenho por filial;
+- desempenho por vendedor;
+- pontuação;
+- conversões;
+- evolução dentro do período selecionado.
+
+---
+
+## Configurações
+
+A área de configurações permite gerenciar informações de conta e, de acordo com o perfil, informações da empresa.
+
+Entre os dados disponíveis estão:
+
+- nome;
+- e-mail;
+- dados de contato;
+- telefone;
+- site;
+- CEP;
+- endereço;
+- número;
+- complemento;
+- bairro;
+- cidade;
+- estado;
+- preferências do sistema;
+- alteração de senha.
+
+As opções administrativas são exibidas somente para os perfis autorizados.
+
+---
+
+# Arquitetura
+
+O projeto utiliza uma arquitetura cliente-servidor.
 
 ```text
-Browser
-  │
-  ▼
-React + TypeScript + Vite
-  │ REST / JSON / JWT
-  ▼
-Java 21 + Spring Boot
-  │
-  ├── Controller  → contrato HTTP
-  ├── Service     → regra de negócio/transação/autorização
-  ├── DAO         → acesso/persistência com Spring Data JPA
-  ├── Model       → entidades JPA
-  └── Utils       → funções utilitárias reutilizáveis
-          │
-          ▼
-      PostgreSQL
+┌───────────────────────────────┐
+│        React + TypeScript     │
+│            Vite              │
+└───────────────┬───────────────┘
+                │
+                │ REST / JSON / JWT
+                ▼
+┌───────────────────────────────┐
+│       Spring Boot / Java      │
+│                               │
+│ Controller                    │
+│ Service                       │
+│ DAO                           │
+│ DTO                           │
+│ Model                         │
+│ Security                      │
+│ Specification                 │
+│ Validation                    │
+│ Utils                         │
+└───────────────┬───────────────┘
+                │
+                │ JPA / JDBC
+                ▼
+┌───────────────────────────────┐
+│      PostgreSQL / Supabase    │
+│                               │
+│           Flyway              │
+└───────────────────────────────┘
 ```
 
-## Stack
+---
 
-### Frontend
+# Tecnologias utilizadas
+
+## Frontend
+
 - React 19
-- TypeScript
-- Vite
+- TypeScript 5
+- Vite 8
 - React Router
-- CSS responsivo baseado nos tokens do Design System anexado
-- API client com access token, refresh automático e tratamento padronizado de erros
-- Gráficos SVG/CSS leves, Kanban responsivo, tabelas e formulários reutilizáveis
+- HTML5
+- CSS3
+- Fetch/API Client
+- JWT
 
-### Backend
+## Backend
+
 - Java 21
 - Spring Boot 4.1
 - Spring Web MVC
 - Spring Data JPA
 - Spring Security
-- Bean Validation
-- PostgreSQL
+- Spring Validation
+- Spring Mail
+- Spring Boot Actuator
+- PostgreSQL Driver
 - Flyway
-- JWT HMAC-SHA256 + refresh tokens persistidos como hash
-- BCrypt
 - SpringDoc OpenAPI
-- JUnit 5 / MockMvc / Testcontainers configurados
+- BCrypt
+- JWT
 
-## Estrutura
+## Testes
 
-A organização do backend segue explicitamente o padrão acadêmico solicitado, mantendo como pacotes principais **`controller`**, **`dao`**, **`model`** e **`utils`**. As demais pastas complementam a arquitetura sem substituir essas quatro camadas.
+- JUnit 5
+- Spring Security Test
+- MockMvc
+- H2
+- Testcontainers
+
+## Banco de dados
+
+- PostgreSQL
+- Supabase
+- Flyway
+
+---
+
+# Estrutura do projeto
 
 ```text
-leadflow/
-├── frontend/                  # SPA React/TypeScript
-├── backend/                   # API Java/Spring Boot
-│   └── src/main/java/br/com/leadflow/
-│       ├── controller/              # obrigatório: entrada HTTP
-│       ├── dao/                     # obrigatório: acesso a dados
-│       ├── model/                   # obrigatório: entidades
-│       ├── utils/                   # obrigatório: utilitários
-│       ├── service/
-│       ├── dto/
-│       ├── security/
-│       ├── config/
-│       ├── exception/
-│       ├── specification/
-│       └── validation/
-├── database/                  # notas sobre o schema
-├── docs/                      # arquitetura, API, permissões e Design System
-├── docker-compose.yml
-└── .env.example
+LeadFlow/
+│
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/br/com/leadflow/
+│   │   │   │   ├── config/
+│   │   │   │   ├── controller/
+│   │   │   │   ├── dao/
+│   │   │   │   ├── dto/
+│   │   │   │   ├── exception/
+│   │   │   │   ├── model/
+│   │   │   │   ├── security/
+│   │   │   │   ├── service/
+│   │   │   │   ├── specification/
+│   │   │   │   ├── utils/
+│   │   │   │   └── validation/
+│   │   │   │
+│   │   │   └── resources/
+│   │   │       ├── db/migration/
+│   │   │       ├── application.yml
+│   │   │       ├── application-dev.yml
+│   │   │       └── application-prod.yml
+│   │   │
+│   │   └── test/
+│   │
+│   └── pom.xml
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── styles/
+│   │   └── types/
+│   │
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── database/
+├── docs/
+├── scripts/
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
-## Telas implementadas
+---
 
-1. Login
-2. Cadastro
-3. Dashboard — Visão Geral
-4. Lista de Leads
-5. Funil de Vendas
-6. Detalhes do Lead
-7. Interações
-8. Tarefas — Lista e Calendário
-9. Filiais
-10. Detalhes da Filial
-11. Equipe
-12. Regras de Pontuação
-13. Ranking de Filiais
-14. Configurações
+# Pré-requisitos
 
-## Perfis
+Antes de executar o projeto, instale:
 
-- **Administrador**: visão ampla da empresa, filiais, usuários, regras e configurações.
-- **Gerente**: escopo limitado às filiais autorizadas e equipe vinculada.
-- **Vendedor**: próprios Leads, interações, tarefas e desempenho.
+- **Java 21**
+- **Maven 3.9+**
+- **Node.js 22+**
+- **npm**
+- acesso a um banco **PostgreSQL**
 
-As permissões são validadas no backend; o frontend apenas reflete visualmente o que é permitido.
+O banco pode ser hospedado localmente ou em um serviço PostgreSQL compatível, como o **Supabase**.
 
-## Executar com Docker
+---
 
-Pré-requisito: Docker com Compose.
+# Clonando o projeto
 
 ```bash
-cp .env.example .env
-docker compose up --build
+git clone https://github.com/Danielalves33147/LeadFlow---Projeto-1.git
+cd LeadFlow---Projeto-1
 ```
 
-Acessos:
+---
 
-- Frontend: `http://localhost:8081`
-- Backend: `http://localhost:8080`
-- Swagger: `http://localhost:8080/swagger-ui.html`
-- Health: `http://localhost:8080/actuator/health`
+# Configuração do backend
 
-## Executar sem Docker
+O backend utiliza variáveis de ambiente para conexão com banco, autenticação e envio de e-mails.
 
-### PostgreSQL
+Crie um arquivo `.env` na raiz utilizada pelo backend ou configure as variáveis diretamente no sistema operacional.
 
-Crie um banco `leadflow` e usuário com as credenciais configuradas em `application.yml` ou variáveis de ambiente. O Flyway criará o schema automaticamente.
+Exemplo:
 
-### Backend
+```env
+DB_HOST=seu-host-postgresql
+DB_PORT=5432
+DB_NAME=postgres
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
 
-Requer Java 21 e Maven.
+JWT_SECRET=troque-por-um-segredo-aleatorio-com-pelo-menos-32-caracteres
+JWT_EXPIRATION=900
+JWT_REFRESH_EXPIRATION=604800
+
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+
+DEMO_SEED=false
+SPRING_PROFILES_ACTIVE=dev
+
+FRONTEND_URL=http://localhost:5173
+
+EMAIL_VERIFICATION_EXPIRATION=86400
+INVITATION_EXPIRATION=86400
+```
+
+> Nunca envie o arquivo `.env` real para o Git.
+
+---
+
+# Configuração de e-mail
+
+O LeadFlow suporta dois modos.
+
+## Console
+
+Recomendado para desenvolvimento.
+
+```env
+EMAIL_MODE=console
+```
+
+Os códigos e mensagens são exibidos no terminal do backend.
+
+## SMTP
+
+Para envio real de e-mails:
+
+```env
+EMAIL_MODE=smtp
+
+MAIL_HOST=smtp.seuprovedor.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_email
+MAIL_PASSWORD=sua_senha_de_aplicativo
+EMAIL_FROM=seu_email
+```
+
+O SMTP é utilizado em funcionalidades como confirmação de conta, convites e recuperação de senha.
+
+---
+
+# Executando o backend
+
+Abra um terminal:
 
 ```bash
 cd backend
-mvn clean test
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+mvn clean spring-boot:run
 ```
 
-### Frontend
+Por padrão:
 
-Requer Node.js 22+.
-
-```bash
-cd frontend
-cp .env.example .env
-npm install
-npm run dev
+```text
+http://localhost:8080
 ```
 
-## Contas de demonstração
+---
 
-Com `DEMO_SEED=true` e banco vazio:
+# Configuração do frontend
 
-| Perfil | E-mail | Senha |
-|---|---|---|
-| Administrador | administrador@leadflow.com.br | LeadFlow123! |
-| Gerente | gerente@leadflow.com.br | LeadFlow123! |
-| Vendedor | vendedor@leadflow.com.br | LeadFlow123! |
-
-A senha é conhecida somente para o ambiente demo; no banco é armazenada por BCrypt.
-
-## Variáveis principais
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=leadflow
-DB_USERNAME=leadflow
-DB_PASSWORD=change-me
-JWT_SECRET=replace-with-a-long-random-secret-of-at-least-32-characters
-JWT_EXPIRATION=900
-JWT_REFRESH_EXPIRATION=604800
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:8081
-DEMO_SEED=true
-SPRING_PROFILES_ACTIVE=dev
-```
-
-Frontend:
+Dentro da pasta `frontend`, crie um arquivo `.env`:
 
 ```env
 VITE_API_URL=http://localhost:8080/api/v1
 ```
 
-## Banco e migrations
+---
 
-As migrations estão em:
-
-`backend/src/main/resources/db/migration`
-
-Elas criam empresas, filiais, usuários, autorizações por filial, Leads, regras de pontuação, interações, tarefas, histórico, notificações e refresh tokens, incluindo chaves estrangeiras e índices de consulta.
-
-## Segurança
-
-- senha nunca é armazenada em texto puro;
-- JWT de curta duração;
-- refresh token rotacionado e armazenado somente por hash SHA-256;
-- autenticação stateless;
-- validação multiempresa e por filial no Service;
-- vendedor não consegue consultar registro de outro vendedor;
-- respostas de erro não expõem stack trace;
-- CORS é configurável por ambiente;
-- `DEMO_SEED` é desabilitado no perfil `prod`.
-
-Antes de produção, substitua o segredo JWT, configure TLS, restrinja CORS e utilize um gerenciador de segredos.
-
-## Qualidade
-
-Backend:
+# Executando o frontend
 
 ```bash
+cd frontend
+npm install
+npm run dev
+```
+
+O Vite normalmente disponibilizará a aplicação em:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# Banco de dados e Flyway
+
+As migrations ficam em:
+
+```text
+backend/src/main/resources/db/migration/
+```
+
+O Flyway executa automaticamente as migrations na inicialização do backend.
+
+O projeto possui migrations versionadas para a criação da estrutura principal e uma migration repetível de compatibilidade:
+
+```text
+R__ensure_settings_and_password_change.sql
+```
+
+Essa migration garante estruturas relacionadas às configurações da empresa e ao processo de alteração/recuperação de senha, podendo ser executada de forma idempotente.
+
+Para ambientes existentes, o Flyway preserva o histórico de migrations já aplicadas.
+
+---
+
+# Principais rotas do frontend
+
+| Rota | Função |
+|---|---|
+| `/login` | Login |
+| `/cadastro` | Cadastro |
+| `/confirmar-email` | Confirmação de e-mail |
+| `/ativar-conta` | Ativação de conta |
+| `/esqueci-senha` | Recuperação de senha |
+| `/dashboard` | Dashboard |
+| `/leads` | Lista de Leads |
+| `/leads/funil` | Funil |
+| `/leads/:leadId` | Detalhes do Lead |
+| `/interacoes` | Interações |
+| `/tarefas` | Tarefas |
+| `/equipe` | Equipe |
+| `/pontuacao/regras` | Regras de pontuação |
+| `/ranking-filiais` | Ranking |
+| `/configuracoes` | Configurações |
+
+As rotas são protegidas de acordo com a autenticação e o perfil do usuário.
+
+---
+
+# API e documentação
+
+Com o backend em execução:
+
+### Swagger UI
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+### OpenAPI
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+### Health Check
+
+```text
+http://localhost:8080/actuator/health
+```
+
+---
+
+# Testes e validação
+
+## Backend
+
+Executar testes:
+
+```bash
+cd backend
 mvn clean test
 ```
 
-Frontend:
+Compilar:
 
 ```bash
+mvn clean package
+```
+
+---
+
+## Frontend
+
+Verificação de tipos:
+
+```bash
+cd frontend
 npm run typecheck
+```
+
+Build de produção:
+
+```bash
 npm run build
 ```
 
-## Design System
+---
 
-O arquivo de referência foi incluído em `docs/LeadFlow_Design_System_UI_UX.pdf`. O frontend utiliza seus princípios de paleta, hierarquia, densidade, cards, tabelas, responsividade, acessibilidade e navegação.
+# Segurança
 
-## Verificação completa
+O projeto utiliza diferentes mecanismos de segurança:
 
-Em Linux/macOS, a sequência de testes e builds pode ser executada por:
+- autenticação JWT;
+- refresh tokens;
+- BCrypt para senhas;
+- Spring Security;
+- rotas protegidas;
+- controle de acesso baseado em perfil;
+- validação de permissões no backend;
+- tokens temporários;
+- expiração de tokens;
+- invalidação de sessões após recuperação de senha;
+- configuração de CORS por ambiente;
+- variáveis sensíveis através de ambiente.
 
-```bash
-./scripts/verify.sh
+Para produção, recomenda-se:
+
+- utilizar HTTPS;
+- utilizar segredos fortes;
+- nunca versionar arquivos `.env`;
+- utilizar senhas diferentes por ambiente;
+- restringir CORS;
+- utilizar um gerenciador de segredos;
+- desativar dados de demonstração.
+
+---
+
+# Fluxo resumido
+
+```text
+Usuário
+  │
+  ├── Login / Cadastro / Recuperação
+  │
+  ▼
+Frontend React
+  │
+  │ JWT
+  ▼
+Spring Security
+  │
+  ▼
+Controllers
+  │
+  ▼
+Services
+  │
+  ├── Regras de negócio
+  ├── Permissões
+  └── Validações
+  │
+  ▼
+DAOs / JPA
+  │
+  ▼
+PostgreSQL / Supabase
 ```
 
-Consulte `docs/validation.md` para o checklist de smoke tests e validação antes de produção.
+---
+
+# Objetivo acadêmico
+
+O projeto demonstra, de forma integrada:
+
+- programação orientada a objetos;
+- desenvolvimento de API REST;
+- desenvolvimento frontend;
+- banco de dados relacional;
+- autenticação e autorização;
+- arquitetura em camadas;
+- integração frontend/backend;
+- controle de versão com Git;
+- migrations de banco;
+- tratamento de erros;
+- validação de dados;
+- regras de negócio;
+- documentação de API.
+
+---
+
+# Autores
+
+Projeto desenvolvido para fins acadêmicos.
+
+Repositório:
+
+https://github.com/Danielalves33147/LeadFlow---Projeto-1
+
+---
+
+## Licença
+
+Este projeto foi desenvolvido para fins acadêmicos e educacionais.
