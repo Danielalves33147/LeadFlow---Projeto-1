@@ -166,10 +166,6 @@ export function AppLayout() {
   }, [refreshNotifications]);
 
   useEffect(() => {
-    void refreshNotifications();
-  }, [location.pathname, refreshNotifications]);
-
-  useEffect(() => {
     setMobile(false);
   }, [location.pathname]);
 

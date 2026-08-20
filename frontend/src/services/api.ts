@@ -515,9 +515,30 @@ export const scoreRuleApi = {
     }),
 };
 
+let dashboardInflight: {
+  key: string;
+  promise: Promise<DashboardResponse>;
+} | null = null;
+
+let notificationListInflight: Promise<NotificationListResponse> | null = null;
+
 export const dashboardApi = {
-  get: (params: Record<string, unknown> = {}) =>
-    request<DashboardResponse>(`/dashboard${qs(params)}`),
+  get: (params: Record<string, unknown> = {}) => {
+    const key = `/dashboard${qs(params)}`;
+
+    if (dashboardInflight?.key === key) {
+      return dashboardInflight.promise;
+    }
+
+    const promise = request<DashboardResponse>(key).finally(() => {
+      if (dashboardInflight?.key === key) {
+        dashboardInflight = null;
+      }
+    });
+
+    dashboardInflight = { key, promise };
+    return promise;
+  },
 };
 
 export const rankingApi = {
@@ -526,7 +547,17 @@ export const rankingApi = {
 };
 
 export const notificationApi = {
-  list: () => request<NotificationListResponse>('/notifications'),
+  list: () => {
+    if (notificationListInflight) {
+      return notificationListInflight;
+    }
+
+    notificationListInflight = request<NotificationListResponse>('/notifications').finally(() => {
+      notificationListInflight = null;
+    });
+
+    return notificationListInflight;
+  },
 
   read: (id: number) =>
     request<void>(`/notifications/${id}/read`, {

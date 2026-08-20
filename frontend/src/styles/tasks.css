@@ -615,6 +615,7 @@
   overflow-wrap: anywhere;
 }
 
+
 @media (max-width: 720px) {
   .tasks-details-grid {
     grid-template-columns: 1fr;

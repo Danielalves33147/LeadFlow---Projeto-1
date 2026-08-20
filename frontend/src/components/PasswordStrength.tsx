@@ -7,11 +7,26 @@ type PasswordRule = {
 
 export function passwordRules(value: string): PasswordRule[] {
   return [
-    { label: '8 ou mais caracteres', valid: value.length >= 8 },
-    { label: '1 letra maiúscula', valid: /[A-Z]/.test(value) },
-    { label: '1 letra minúscula', valid: /[a-z]/.test(value) },
-    { label: '1 número', valid: /\d/.test(value) },
-    { label: '1 símbolo', valid: /[^A-Za-z0-9]/.test(value) },
+    {
+      label: '8 ou mais caracteres',
+      valid: value.length >= 8,
+    },
+    {
+      label: '1 letra maiúscula',
+      valid: /[A-Z]/.test(value),
+    },
+    {
+      label: '1 letra minúscula',
+      valid: /[a-z]/.test(value),
+    },
+    {
+      label: '1 número',
+      valid: /\d/.test(value),
+    },
+    {
+      label: '1 símbolo',
+      valid: /[^A-Za-z0-9]/.test(value),
+    },
   ];
 }
 
@@ -19,52 +34,78 @@ export function isStrongPassword(value: string) {
   return passwordRules(value).every((rule) => rule.valid);
 }
 
-function strength(value: string) {
-  const score = passwordRules(value).filter((rule) => rule.valid).length;
+function getPasswordStrength(value: string) {
+  const rules = passwordRules(value);
+  const score = rules.filter((rule) => rule.valid).length;
 
   if (!value) {
-    return { label: 'Aguardando senha', level: 'empty', score } as const;
+    return {
+      level: 'empty',
+      label: '',
+      message:
+        'Use 8+ caracteres, maiúscula, minúscula, número e símbolo.',
+    } as const;
   }
 
   if (score <= 2) {
-    return { label: 'Fraca', level: 'weak', score } as const;
+    return {
+      level: 'weak',
+      label: 'Fraca',
+      message:
+        'Use 8+ caracteres, maiúscula, minúscula, número e símbolo.',
+    } as const;
   }
 
   if (score <= 4) {
-    return { label: 'Média', level: 'medium', score } as const;
+    const missingRules = rules
+      .filter((rule) => !rule.valid)
+      .map((rule) => rule.label);
+
+    return {
+      level: 'medium',
+      label: 'Média',
+      message:
+        missingRules.length > 0
+          ? `Falta ${missingRules[0].toLowerCase()}.`
+          : 'Falta pouco para ficar segura.',
+    } as const;
   }
 
-  return { label: 'Forte', level: 'strong', score } as const;
+  return {
+    level: 'strong',
+    label: 'Forte',
+    message: 'Senha segura.',
+  } as const;
 }
 
-export function PasswordStrength({ value }: { value: string }) {
-  const rules = passwordRules(value);
-  const current = strength(value);
+export function PasswordStrength({
+  value,
+}: {
+  value: string;
+}) {
+  const current = getPasswordStrength(value);
 
   return (
-    <div className="lf-password-strength" data-level={current.level} aria-live="polite">
-      <div className="lf-password-strength-head">
-        <span>Força da senha</span>
-        <strong>{current.label}</strong>
-      </div>
+    <div
+      className="lf-password-strength"
+      data-level={current.level}
+      aria-live="polite"
+    >
+      {current.label && (
+        <>
+          <strong className="lf-password-strength-status">
+            {current.label}
+          </strong>
 
-      <div className="lf-password-strength-bar" aria-hidden="true">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <span key={index} className={index < current.score ? 'active' : ''} />
-        ))}
-      </div>
-
-      <div className="lf-password-rules">
-        {rules.map((rule) => (
-          <span
-            key={rule.label}
-            className={`lf-password-rule ${rule.valid ? 'valid' : 'missing'}`}
-          >
-            <span aria-hidden="true">{rule.valid ? '✓' : '•'}</span>
-            {rule.label}
+          <span className="lf-password-strength-separator">
+            ·
           </span>
-        ))}
-      </div>
+        </>
+      )}
+
+      <span className="lf-password-strength-message">
+        {current.message}
+      </span>
     </div>
   );
 }
