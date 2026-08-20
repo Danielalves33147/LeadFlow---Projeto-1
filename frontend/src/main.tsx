@@ -6,6 +6,7 @@ import { AuthProvider } from './app/AuthContext';
 import { ToastProvider } from './components/ui';
 import './styles/global.css';
 import './styles/select-controls.css';
+import './styles/responsive.css';
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

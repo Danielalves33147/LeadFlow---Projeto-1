@@ -1,0 +1,1201 @@
+/*
+ * LeadFlow — camada responsiva global
+ *
+ * Este arquivo é carregado por último e concentra os ajustes de layout para
+ * telas ultrawide, desktops, notebooks/tablets e celulares. A intenção é
+ * preservar os componentes existentes e apenas adaptar proporções, quebras,
+ * navegação, formulários, tabelas e overlays ao espaço disponível.
+ */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.lf-main,
+.lf-content,
+.lf-content > *,
+.lf-card,
+.lf-table-wrap,
+.lf-toolbar,
+.lf-page-header-main,
+.lf-settings-content,
+.lf-ranking-main,
+.lf-branch-detail-layout,
+.lf-detail-activity-card {
+  min-width: 0;
+}
+
+.lf-content {
+  width: 100%;
+}
+
+.lf-page-header-main,
+.lf-page-actions,
+.lf-toolbar,
+.lf-card-header,
+.lf-card-head {
+  max-width: 100%;
+}
+
+.lf-input,
+.lf-select,
+.lf-textarea,
+button,
+select,
+input,
+textarea {
+  max-width: 100%;
+}
+
+.lf-table-wrap,
+.lf-leads-table-wrap,
+.interactions-table-wrap,
+.tasks-table-wrap,
+.team-table-shell,
+.lf-ranking-table-wrap,
+.lf-score-rules-table-wrap,
+.lf-detail-tasks-table {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+.lf-modal,
+.lf-drawer,
+.lf-notification-panel {
+  overscroll-behavior: contain;
+}
+
+/* -------------------------------------------------------------------------
+   MUITO GRANDES / ULTRAWIDE — 1920 px ou mais
+   ------------------------------------------------------------------------- */
+@media (min-width: 1920px) {
+  .lf-content {
+    width: min(100%, 1920px);
+    max-width: 1920px;
+    margin-inline: auto;
+    padding: 28px clamp(36px, 2.4vw, 56px) 48px;
+  }
+
+  .lf-topbar {
+    padding-inline: clamp(32px, 2.2vw, 52px);
+  }
+
+  .lf-page-title {
+    font-size: 26px;
+    line-height: 34px;
+  }
+
+  .lf-page-description {
+    max-width: 920px;
+  }
+
+  .lf-dashboard-page {
+    width: 100%;
+    max-width: 1820px;
+  }
+
+  .lf-dashboard-overview {
+    grid-template-columns:
+      minmax(340px, 0.82fr)
+      minmax(700px, 1.9fr)
+      minmax(340px, 0.88fr);
+    gap: 18px;
+  }
+
+  .lf-dashboard-middle {
+    grid-template-columns: minmax(480px, 0.95fr) minmax(720px, 1.55fr);
+    gap: 18px;
+  }
+
+  .lf-dashboard-footer {
+    grid-template-columns: minmax(0, 1.7fr) minmax(420px, 0.9fr);
+    gap: 18px;
+  }
+
+  .lf-dashboard-evolution .lf-chart {
+    height: 205px;
+  }
+
+  .lf-dashboard-stage .lf-donut-wrap {
+    min-height: 205px;
+    height: 205px;
+  }
+
+  .lf-kpi-grid-compact .lf-kpi,
+  .lf-executive-metric {
+    min-height: 104px;
+  }
+
+  .lf-card {
+    border-radius: 10px;
+  }
+
+  .lf-auth-brand-panel {
+    padding-inline: clamp(64px, 7vw, 128px);
+  }
+
+  .lf-auth-form {
+    max-width: 460px;
+  }
+
+  .lf-auth-form.register {
+    max-width: 680px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   DESKTOP GRANDE — 1440 a 1919 px
+   ------------------------------------------------------------------------- */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .lf-content {
+    width: 100%;
+    max-width: 1720px;
+    margin-inline: auto;
+    padding: 22px clamp(24px, 2vw, 36px) 40px;
+  }
+
+  .lf-dashboard-page {
+    max-width: 1640px;
+  }
+
+  .lf-dashboard-stack,
+  .lf-dashboard-overview,
+  .lf-dashboard-middle,
+  .lf-dashboard-footer {
+    gap: 16px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   DESKTOP / NOTEBOOK — 1200 a 1439 px
+   ------------------------------------------------------------------------- */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .lf-content {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 20px 24px 36px;
+  }
+
+  .lf-topbar {
+    height: 58px;
+    padding-inline: 24px;
+  }
+
+  .lf-page-header {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .lf-toolbar {
+    gap: 8px;
+  }
+
+  .lf-card {
+    padding: 18px;
+  }
+
+  .lf-kpi-grid,
+  .lf-grid-2,
+  .lf-grid-3,
+  .lf-grid-6,
+  .lf-grid-8-4 {
+    gap: 14px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   NOTEBOOK COMPACTO / TABLET HORIZONTAL — até 1199 px
+
+   Nessas larguras o menu lateral passa a funcionar como drawer. Isso evita
+   que 264 px sejam retirados da área útil de páginas com tabelas e gráficos.
+   ------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+  :root {
+    --lf-sidebar: 0px;
+  }
+
+  .lf-shell,
+  .lf-shell.sidebar-collapsed {
+    padding-left: 0 !important;
+  }
+
+  .lf-sidebar,
+  .lf-sidebar.collapsed {
+    width: min(300px, 86vw) !important;
+    transform: translateX(-102%);
+    transition: transform 180ms ease;
+  }
+
+  .lf-sidebar.open,
+  .lf-sidebar.collapsed.open {
+    transform: translateX(0);
+  }
+
+  .lf-sidebar-toggle {
+    display: none !important;
+  }
+
+  .lf-sidebar .lf-brand,
+  .lf-sidebar.collapsed .lf-brand {
+    justify-content: flex-start;
+    padding-inline: 20px;
+  }
+
+  .lf-sidebar .lf-brand-name,
+  .lf-sidebar .lf-nav-label,
+  .lf-sidebar .lf-nav-group-label,
+  .lf-sidebar .lf-user-meta,
+  .lf-sidebar.collapsed .lf-brand-name,
+  .lf-sidebar.collapsed .lf-nav-label,
+  .lf-sidebar.collapsed .lf-nav-group-label,
+  .lf-sidebar.collapsed .lf-user-meta {
+    display: block !important;
+  }
+
+  .lf-sidebar .lf-nav-item,
+  .lf-sidebar .lf-nav-sub,
+  .lf-sidebar.collapsed .lf-nav-item,
+  .lf-sidebar.collapsed .lf-nav-sub {
+    justify-content: flex-start;
+  }
+
+  .lf-sidebar .lf-nav-item,
+  .lf-sidebar.collapsed .lf-nav-item {
+    padding-inline: 12px;
+  }
+
+  .lf-sidebar .lf-nav-sub,
+  .lf-sidebar.collapsed .lf-nav-sub {
+    padding-left: 32px;
+    padding-right: 12px;
+  }
+
+  .lf-sidebar .lf-user-box,
+  .lf-sidebar.collapsed .lf-user-box {
+    justify-content: flex-start;
+  }
+
+  .lf-mobile-menu {
+    display: grid !important;
+    flex: 0 0 auto;
+  }
+
+  .lf-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(15, 23, 42, 0.42);
+    backdrop-filter: blur(1px);
+  }
+
+  .lf-topbar {
+    height: 58px;
+    padding-inline: 20px;
+    gap: 10px;
+  }
+
+  .lf-content {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 20px clamp(18px, 2.6vw, 28px) 40px;
+  }
+
+  .lf-page-header {
+    gap: 14px;
+  }
+
+  .lf-page-actions {
+    min-width: 0;
+  }
+
+  .lf-toolbar,
+  .lf-leads-toolbar,
+  .interactions-toolbar,
+  .tasks-filter-bar,
+  .team-filter-navbar {
+    max-width: 100%;
+  }
+
+  .lf-form-grid,
+  .lf-settings-form-grid,
+  .lf-profile-info-grid {
+    min-width: 0;
+  }
+
+  /* Faz menus de filtro respeitarem a viewport. */
+  .lf-leads-filter-popover,
+  .interactions-filter-menu,
+  .lf-funnel-filter-popover,
+  .tasks-search-select-menu,
+  .team-search-select-menu,
+  .lf-branch-search-menu {
+    max-width: min(360px, calc(100vw - 40px));
+  }
+
+  /* Calendário e tabelas nunca podem aumentar a largura da página inteira. */
+  .lf-calendar,
+  .tasks-calendar,
+  .lf-kanban,
+  .lf-ranking-table-wrap,
+  .lf-score-rules-table-wrap,
+  .lf-detail-tasks-table {
+    max-width: 100%;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   TABLET — 768 a 1023 px
+   ------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lf-content {
+    padding: 20px 22px 36px;
+  }
+
+  .lf-page-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .lf-page-header-main {
+    flex: 1 1 460px;
+  }
+
+  .lf-page-actions {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+  }
+
+  .lf-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-grid-3,
+  .lf-grid-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-grid-8-4,
+  .lf-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-auth {
+    grid-template-columns: minmax(320px, 40%) 1fr;
+  }
+
+  .lf-auth-brand-panel {
+    padding: 36px 30px;
+  }
+
+  .lf-auth-brand-panel h1 {
+    font-size: 27px;
+    line-height: 35px;
+  }
+
+  .lf-auth-form-panel {
+    padding: 32px;
+  }
+
+  /* Filtros: duas/três colunas fluidas, sem larguras fixas. */
+  .lf-leads-searchable-filter,
+  .interactions-filter-branch,
+  .interactions-filter-lead,
+  .interactions-filter-responsible,
+  .interactions-filter-channel,
+  .interactions-filter-type {
+    width: auto;
+    min-width: 0;
+  }
+
+  .lf-leads-searchable-filter {
+    flex: 1 1 220px;
+  }
+
+  .interactions-toolbar-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    width: 100%;
+  }
+
+  .interactions-toolbar-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+
+  .tasks-filter-grid,
+  .tasks-filter-grid-seller {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .team-filter-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-settings-page {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .lf-settings-nav {
+    top: 68px;
+  }
+
+  .lf-ranking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-ranking-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-branch-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-branch-kpi-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-detail-info-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .lf-detail-info-item,
+  .lf-detail-info-item:first-child,
+  .lf-detail-info-item:last-child {
+    padding: 0;
+    border-right: 0;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   CELULARES — até 767 px
+   ------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .lf-topbar {
+    min-height: 56px;
+    height: 56px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+
+  .lf-topbar-brand {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lf-content {
+    padding:
+      16px
+      max(14px, env(safe-area-inset-right))
+      calc(76px + env(safe-area-inset-bottom))
+      max(14px, env(safe-area-inset-left));
+  }
+
+  .lf-page-header {
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .lf-page-title,
+  .lf-detail-name-row h1 {
+    font-size: clamp(20px, 6vw, 23px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .lf-page-description {
+    font-size: 13px;
+    line-height: 19px;
+  }
+
+  .lf-page-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .lf-page-actions > *,
+  .lf-page-actions .lf-btn,
+  .lf-page-actions .lf-select,
+  .lf-page-actions .lf-period-select {
+    min-width: 0;
+    flex: 1 1 150px;
+  }
+
+  .lf-toolbar,
+  .lf-leads-toolbar,
+  .interactions-toolbar,
+  .tasks-filter-bar,
+  .team-filter-navbar {
+    width: 100%;
+    padding: 10px;
+    gap: 9px;
+    align-items: stretch;
+  }
+
+  .lf-search,
+  .lf-leads-searchable-filter,
+  .interactions-filter,
+  .interactions-filter-branch,
+  .interactions-filter-lead,
+  .interactions-filter-responsible,
+  .interactions-filter-channel,
+  .interactions-filter-type,
+  .lf-funnel-searchable-filter,
+  .lf-branch-search,
+  .tasks-title-filter,
+  .tasks-date-filter,
+  .tasks-search-select,
+  .team-search-select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .lf-leads-filter-popover,
+  .lf-leads-name-popover,
+  .interactions-filter-menu,
+  .lf-funnel-filter-popover,
+  .tasks-search-select-menu,
+  .team-search-select-menu,
+  .lf-branch-search-menu {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .lf-card {
+    padding: 15px;
+  }
+
+  .lf-card-head,
+  .lf-card-header {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .lf-card-head > div:first-child,
+  .lf-card-header > div:first-child {
+    min-width: 0;
+    flex: 1 1 220px;
+  }
+
+  .lf-kpi-grid,
+  .lf-grid-2,
+  .lf-grid-3,
+  .lf-grid-6,
+  .lf-grid-8-4,
+  .lf-form-grid,
+  .lf-profile-info-grid,
+  .lf-settings-form-grid,
+  .lf-settings-password-grid,
+  .lf-settings-preferences-grid,
+  .lf-permission-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .lf-form-grid .span-2 {
+    grid-column: auto;
+  }
+
+  .lf-input,
+  .lf-select,
+  .lf-textarea,
+  .tasks-title-filter input,
+  .tasks-date-filter input,
+  .tasks-search-select-trigger,
+  .team-search-select-trigger,
+  .lf-leads-filter-trigger,
+  .interactions-filter-trigger,
+  .lf-funnel-filter-trigger,
+  .lf-branch-search-input {
+    font-size: 16px;
+  }
+
+  /* Modais e drawers utilizam viewport dinâmica e áreas seguras. */
+  .lf-modal-backdrop {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .lf-modal {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .lf-modal-header,
+  .lf-modal-body,
+  .lf-modal-footer {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .lf-modal-header {
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .lf-modal-footer {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+  }
+
+  .lf-modal-footer .lf-btn {
+    flex: 1 1 140px;
+  }
+
+  .lf-drawer {
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+  }
+
+  .lf-drawer-header,
+  .lf-drawer-body,
+  .lf-drawer-footer {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .lf-drawer-header {
+    padding-top: max(18px, env(safe-area-inset-top));
+  }
+
+  .lf-drawer-footer {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+  }
+
+  .lf-drawer-footer .lf-btn {
+    flex: 1 1 140px;
+  }
+
+  .lf-notification-panel {
+    top: 60px;
+    right: max(8px, env(safe-area-inset-right));
+    left: max(8px, env(safe-area-inset-left));
+    width: auto;
+    max-height: calc(100dvh - 68px - env(safe-area-inset-bottom));
+  }
+
+  .lf-notification-head {
+    gap: 10px;
+  }
+
+  .lf-notification-read-all {
+    max-width: 150px;
+    white-space: normal;
+    text-align: right;
+  }
+
+  /* Autenticação: sem altura fixa que brigue com teclado virtual. */
+  .lf-auth {
+    min-height: 100dvh;
+    grid-template-columns: 1fr;
+  }
+
+  .lf-auth-brand-panel {
+    display: none;
+  }
+
+  .lf-auth-form-panel {
+    min-height: 100dvh;
+    align-items: start;
+    padding:
+      max(24px, env(safe-area-inset-top))
+      max(18px, env(safe-area-inset-right))
+      max(28px, env(safe-area-inset-bottom))
+      max(18px, env(safe-area-inset-left));
+  }
+
+  .lf-auth-form,
+  .lf-auth-form.register {
+    width: min(100%, 600px);
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  .lf-auth-row {
+    flex-wrap: wrap;
+  }
+
+  .lf-demo-box {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Leads, interações, tarefas e equipe usam os cartões móveis já existentes. */
+  .lf-table-wrap.mobile-cards {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .lf-table-wrap.mobile-cards .lf-table {
+    display: none;
+  }
+
+  .lf-mobile-records {
+    display: grid !important;
+    gap: 10px;
+  }
+
+  .lf-mobile-records > .lf-card,
+  .team-mobile-records > .lf-card {
+    width: 100%;
+  }
+
+  .lf-mobile-record-meta {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  /* Páginas com tabelas que não possuem versão em cards continuam roláveis. */
+  .lf-score-rules-table-wrap,
+  .lf-ranking-table-wrap,
+  .lf-detail-tasks-table {
+    overflow-x: auto;
+  }
+
+  .lf-score-rules-table,
+  .lf-ranking-table,
+  .lf-detail-tasks-table .lf-table {
+    max-width: none;
+  }
+
+  /* Funil: uma etapa por vez já é selecionada pelo componente. */
+  .lf-kanban,
+  .lf-funnel-kanban {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .lf-kanban-column,
+  .lf-kanban-column.mobile-active {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .lf-funnel-toolbar-actions {
+    width: 100%;
+  }
+
+  /* Detalhes do lead */
+  .lf-detail-header-expanded {
+    padding: 15px;
+  }
+
+  .lf-detail-heading {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .lf-detail-title-row,
+  .lf-detail-name-row {
+    min-width: 0;
+  }
+
+  .lf-detail-actions {
+    width: 100%;
+    margin-left: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lf-detail-actions .lf-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lf-detail-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+
+  .lf-detail-info-item,
+  .lf-detail-info-item:first-child,
+  .lf-detail-info-item:last-child {
+    padding: 0;
+    border-right: 0;
+  }
+
+  .lf-detail-info-item strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .lf-detail-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
+  }
+
+  .lf-detail-nav button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .lf-detail-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-detail-scroll-list {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  /* Tarefas */
+  .tasks-filter-bar {
+    flex-direction: column;
+  }
+
+  .tasks-filter-grid,
+  .tasks-filter-grid-seller {
+    width: 100%;
+    grid-template-columns: 1fr !important;
+  }
+
+  .tasks-filter-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .tasks-filter-actions .lf-btn {
+    flex: 1 1 0;
+  }
+
+  .tasks-calendar-toolbar {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tasks-calendar-date-jump {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tasks-calendar-date-jump input,
+  .tasks-calendar-date-jump .lf-btn {
+    width: 100%;
+  }
+
+  /* Equipe */
+  .team-filter-navbar {
+    flex-direction: column;
+  }
+
+  .team-filter-group {
+    width: 100%;
+    grid-template-columns: 1fr !important;
+  }
+
+  .team-filter-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .team-filter-actions .lf-btn {
+    flex: 1 1 0;
+  }
+
+  /* Ranking */
+  .lf-ranking-header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .lf-ranking-header-actions > *,
+  .lf-ranking-period,
+  .lf-ranking-header-actions .lf-btn {
+    flex: 1 1 150px;
+  }
+
+  .lf-ranking-layout,
+  .lf-ranking-summary-grid,
+  .lf-ranking-stack {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Configurações */
+  .lf-settings-page {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-settings-nav {
+    position: static;
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    gap: 6px;
+    scrollbar-width: thin;
+  }
+
+  .lf-settings-nav button {
+    width: auto;
+    min-width: max-content;
+    white-space: nowrap;
+  }
+
+  .lf-settings-section-head,
+  .lf-settings-password-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lf-settings-actions {
+    flex-wrap: wrap;
+  }
+
+  .lf-settings-actions .lf-btn {
+    flex: 1 1 140px;
+  }
+
+  /* Filial */
+  .lf-branch-detail-page {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .lf-branch-detail-layout,
+  .lf-branch-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-branch-kpi-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  .lf-branch-kpi-card {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-branch-analytic-card {
+    min-height: 230px;
+  }
+
+  /* Paginação nunca deve forçar a viewport. */
+  .lf-pagination,
+  .lf-score-pagination,
+  .lf-ranking-pagination {
+    flex-wrap: wrap;
+  }
+
+  .lf-pagination .spacer {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   CELULARES PEQUENOS — até 480 px
+   ------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .lf-content {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .lf-topbar-brand {
+    font-size: 14px;
+  }
+
+  .lf-card {
+    padding: 13px;
+    border-radius: 8px;
+  }
+
+  .lf-card-title {
+    font-size: 15px;
+  }
+
+  .lf-page-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .lf-page-actions > *,
+  .lf-page-actions .lf-btn,
+  .lf-page-actions .lf-select,
+  .lf-page-actions .lf-period-select {
+    width: 100%;
+  }
+
+  .lf-detail-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-detail-info-grid,
+  .lf-branch-kpi-column,
+  .lf-executive-metrics,
+  .lf-kpi-grid-compact {
+    grid-template-columns: 1fr !important;
+  }
+
+  .lf-demo-box {
+    grid-template-columns: 1fr;
+  }
+
+  .lf-demo-box strong {
+    grid-column: auto;
+  }
+
+  .lf-notification-item {
+    grid-template-columns: 32px minmax(0, 1fr) 7px;
+    gap: 8px;
+    padding-inline: 10px;
+  }
+
+  .lf-notification-head {
+    padding-inline: 10px;
+  }
+
+  .lf-auth-form-panel {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+
+  .lf-modal-body,
+  .lf-drawer-body {
+    padding: 16px 14px;
+  }
+
+  .lf-modal-header,
+  .lf-modal-footer,
+  .lf-drawer-header,
+  .lf-drawer-footer {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .lf-ranking-compact-card {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+  }
+
+  .lf-summary-list > div,
+  .lf-settings-list > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lf-bar-row {
+    grid-template-columns: minmax(80px, 0.8fr) minmax(100px, 1fr) 38px;
+  }
+
+  .tasks-calendar-nav-group {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tasks-calendar-month-title {
+    grid-column: 1 / -1;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   TELAS MUITO ESTREITAS — até 360 px
+   ------------------------------------------------------------------------- */
+@media (max-width: 360px) {
+  body {
+    min-width: 280px;
+  }
+
+  .lf-content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .lf-topbar {
+    padding-inline: 10px;
+  }
+
+  .lf-notification-button,
+  .lf-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .lf-page-title {
+    font-size: 19px;
+  }
+
+  .lf-btn {
+    padding-inline: 12px;
+  }
+
+  .lf-card {
+    padding: 12px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   TELAS BAIXAS / LANDSCAPE DE CELULAR
+   ------------------------------------------------------------------------- */
+@media (max-height: 700px) and (min-width: 768px) {
+  .lf-auth-brand-panel {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .lf-auth-form-panel {
+    align-items: start;
+    overflow-y: auto;
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .lf-sidebar .lf-nav {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+
+@media (max-height: 520px) and (max-width: 1199px) {
+  .lf-sidebar,
+  .lf-sidebar.collapsed {
+    overflow-y: auto;
+  }
+
+  .lf-notification-panel {
+    max-height: calc(100dvh - 62px);
+  }
+}
