@@ -1,354 +1,201 @@
-# LeadFlow
+<div align="center">
 
-CRM B2B full stack para gestão de **Leads, filiais, equipes, interações, tarefas e desempenho comercial**.
+# 📈 LeadFlow
 
-O LeadFlow foi desenvolvido como projeto acadêmico de **Projeto Integrador**, aplicando conceitos de desenvolvimento web, APIs REST, segurança, banco de dados relacional, controle de acesso por perfil e organização em camadas.
+### CRM B2B para gestão de Leads, tarefas, interações, equipes e desempenho comercial
 
----
+![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-6DB33F?logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111827)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?logo=postgresql&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-3.9%2B-C71A36?logo=apachemaven&logoColor=white)
+![Status](https://img.shields.io/badge/status-projeto%20acad%C3%AAmico-6f42c1)
 
-## Visão geral
+Projeto full stack desenvolvido para centralizar o processo comercial de uma empresa, desde o cadastro e acompanhamento de Leads até tarefas, interações, pontuação, rankings e indicadores de desempenho.
 
-O sistema permite que empresas organizem o fluxo comercial desde a entrada de um Lead até sua conversão, distribuindo responsabilidades entre administradores, gerentes e vendedores.
+**Frontend:** React + TypeScript + Vite  
+**Backend:** Java 21 + Spring Boot  
+**Banco:** PostgreSQL / Supabase
 
-Entre os principais recursos estão:
-
-- cadastro e autenticação de usuários;
-- confirmação de e-mail;
-- recuperação de senha por código;
-- gestão de Leads;
-- funil de vendas;
-- registro de interações comerciais;
-- sistema de pontuação de Leads;
-- tarefas em lista e calendário;
-- gestão de equipe;
-- gestão de filiais;
-- dashboard com indicadores;
-- ranking de filiais e vendedores;
-- configurações de conta e empresa;
-- controle de acesso baseado em perfil;
-- persistência em PostgreSQL/Supabase;
-- migrations gerenciadas com Flyway.
+</div>
 
 ---
 
-## Funcionalidades
+## 📚 Sumário
 
-### Autenticação e conta
-
-O sistema possui fluxo completo de autenticação:
-
-- cadastro de usuário;
-- login;
-- confirmação de e-mail;
-- ativação de conta;
-- access token e refresh token;
-- logout;
-- atualização de perfil;
-- alteração de senha;
-- recuperação de senha através de código de 6 dígitos enviado por e-mail.
-
-As senhas são armazenadas utilizando **BCrypt**.
-
-Os refresh tokens são persistidos de forma protegida utilizando hash.
+- [Sobre o projeto](#-sobre-o-projeto)
+- [Principais funcionalidades](#-principais-funcionalidades)
+- [Perfis de acesso](#-perfis-de-acesso)
+- [Arquitetura](#-arquitetura)
+- [Tecnologias](#-tecnologias)
+- [Estrutura do repositório](#-estrutura-do-repositório)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação rápida](#-instalação-rápida)
+- [Configuração do banco e variáveis de ambiente](#-configuração-do-banco-e-variáveis-de-ambiente)
+- [Executando o backend](#-executando-o-backend)
+- [Executando no Eclipse](#-executando-no-eclipse)
+- [Executando o frontend](#-executando-o-frontend)
+- [Migrations com Flyway](#-migrations-com-flyway)
+- [API e Swagger](#-api-e-swagger)
+- [Testes e build](#-testes-e-build)
+- [Problemas comuns](#-problemas-comuns)
+- [Segurança](#-segurança)
+- [Fluxo básico com Git](#-fluxo-básico-com-git)
+- [Contexto acadêmico](#-contexto-acadêmico)
 
 ---
 
-### Perfis de acesso
+## 🎯 Sobre o projeto
 
-O LeadFlow possui três perfis principais:
+O **LeadFlow** é um CRM B2B responsivo voltado para organização e acompanhamento do fluxo comercial. A aplicação permite registrar Leads, acompanhar o estágio de cada oportunidade, organizar tarefas, registrar interações, aplicar regras de pontuação e acompanhar indicadores de desempenho.
 
-| Perfil | Permissões principais |
+O sistema foi estruturado com separação clara de responsabilidades entre frontend, backend e banco de dados. No backend, as regras de autorização são aplicadas na própria API, evitando que o controle de acesso dependa apenas da interface.
+
+> O projeto atual é executado localmente **sem Docker**.
+
+---
+
+## ✨ Principais funcionalidades
+
+| Área | Recursos |
 |---|---|
-| **Administrador** | Acesso amplo à empresa, equipe, filiais, ranking, regras de pontuação e configurações |
-| **Gerente** | Gestão e acompanhamento das filiais e usuários aos quais possui acesso |
-| **Vendedor** | Gestão dos próprios Leads, interações e tarefas |
+| **Autenticação** | Login, sessão JWT, refresh token, ativação de conta e logout |
+| **Recuperação de senha** | Código temporário por e-mail ou console, validação e redefinição de senha |
+| **Leads** | Cadastro, edição, filtros, responsável, estágio e histórico |
+| **Interações** | Registro de contatos e aplicação de pontuação |
+| **Tarefas** | Criação, edição, conclusão, cancelamento, filtros, lista e calendário |
+| **Dashboard** | KPIs, evolução comercial e distribuição por estágio |
+| **Períodos** | Indicadores e gráficos ajustados ao período selecionado |
+| **Filiais** | Gestão e indicadores por filial |
+| **Equipe** | Gestão de usuários e permissões por perfil |
+| **Ranking** | Comparação de desempenho de filiais e usuários |
+| **Pontuação** | Regras configuráveis para interações comerciais |
+| **Configurações** | Dados da empresa, conta e preferências permitidas por perfil |
 
-O vendedor é direcionado diretamente para a área de **Leads** após o login e não possui acesso ao dashboard administrativo.
+### Agrupamento dos gráficos
 
-As permissões importantes são validadas também no backend.
+O intervalo visual dos gráficos muda conforme o período escolhido:
 
----
-
-## Gestão de Leads
-
-O módulo de Leads permite:
-
-- cadastrar Leads;
-- editar informações;
-- definir responsável;
-- associar Lead a uma filial;
-- alterar estágio;
-- consultar detalhes;
-- visualizar histórico;
-- pesquisar e filtrar registros;
-- acompanhar última interação;
-- utilizar visualização em tabela;
-- acompanhar o Lead pelo funil comercial.
-
-### Estágios
-
-O fluxo comercial utiliza estágios como:
-
-- Novo;
-- Contatado;
-- Negociação;
-- Cliente;
-- Perdido.
-
----
-
-## Funil de vendas
-
-O sistema possui uma visualização em formato de funil/Kanban para acompanhar os Leads conforme avançam pelo processo comercial.
-
-Essa visualização facilita a identificação de:
-
-- Leads recém-cadastrados;
-- Leads em contato;
-- negociações em andamento;
-- conversões;
-- oportunidades perdidas.
-
----
-
-## Interações
-
-As interações representam contatos realizados com os Leads.
-
-É possível registrar informações como:
-
-- Lead;
-- responsável;
-- canal;
-- tipo de interação;
-- observações;
-- pontuação aplicada;
-- data da interação.
-
-As interações podem alterar a pontuação do Lead de acordo com as regras configuradas pela empresa.
-
----
-
-## Regras de pontuação
-
-Administradores podem configurar regras de pontuação associadas aos tipos de interação.
-
-As operações disponíveis permitem:
-
-- adicionar pontos;
-- subtrair pontos;
-- definir uma pontuação.
-
-As regras podem ser ativadas ou desativadas conforme a estratégia comercial.
-
----
-
-## Tarefas
-
-O módulo de tarefas possui duas formas de visualização:
-
-### Lista
-
-Permite:
-
-- pesquisar tarefas pelo nome;
-- filtrar por Lead;
-- filtrar por responsável;
-- filtrar por filial;
-- filtrar por status;
-- filtrar por data;
-- criar tarefas;
-- editar tarefas;
-- concluir tarefas;
-- cancelar tarefas;
-- abrir um modal com todos os detalhes.
-
-### Calendário
-
-Permite visualizar as tarefas distribuídas por data e navegar entre os meses.
-
-Também é possível selecionar uma data específica para facilitar a consulta.
-
----
-
-## Dashboard e indicadores
-
-Administradores e gerentes possuem acesso ao dashboard de desempenho.
-
-Os indicadores respeitam o período selecionado pelo usuário.
-
-Períodos disponíveis:
-
-- 7 dias;
-- 30 dias;
-- 90 dias;
-- 180 dias;
-- 365 dias.
-
-Para melhorar a leitura dos gráficos, os dados são agrupados de acordo com o tamanho do período:
-
-| Período | Agrupamento |
-|---|---|
+| Período selecionado | Agrupamento |
+|---:|---|
 | 7 dias | Diário |
 | 30 dias | Semanal |
 | 90 dias | Quinzenal |
 | 180 dias | Mensal |
 | 365 dias | Bimestral |
 
-O período influencia KPIs, evolução, distribuições, rankings e demais indicadores dependentes de tempo.
+---
+
+## 👥 Perfis de acesso
+
+### Administrador
+
+Possui visão ampla da empresa e acesso às funcionalidades administrativas, como filiais, equipe, regras de pontuação, configurações, Leads, tarefas, interações e indicadores.
+
+### Gerente
+
+Opera dentro do escopo de filiais e equipe permitido para sua conta, com acesso às informações gerenciais correspondentes.
+
+### Vendedor
+
+Trabalha com os próprios Leads, interações e tarefas. Endpoints administrativos não fazem parte do fluxo desse perfil.
+
+> As permissões são validadas no **backend**. O frontend apenas reflete visualmente os recursos permitidos para cada usuário.
 
 ---
 
-## Ranking
+## 🏗️ Arquitetura
 
-O sistema permite acompanhar desempenho comercial através de rankings.
+```mermaid
+flowchart TD
+    A[Navegador] --> B[React + TypeScript + Vite]
+    B -->|REST / JSON / JWT| C[Spring Boot API]
+    C --> D[Controller]
+    D --> E[Service]
+    E --> F[DAO / Spring Data JPA]
+    F --> G[(PostgreSQL / Supabase)]
+    E --> H[Security / Authorization]
+    E --> I[DTO / Validation / Specifications]
+    C --> J[Flyway]
+    J --> G
+```
 
-Entre os dados analisados estão:
-
-- desempenho por filial;
-- desempenho por vendedor;
-- pontuação;
-- conversões;
-- evolução dentro do período selecionado.
-
----
-
-## Configurações
-
-A área de configurações permite gerenciar informações de conta e, de acordo com o perfil, informações da empresa.
-
-Entre os dados disponíveis estão:
-
-- nome;
-- e-mail;
-- dados de contato;
-- telefone;
-- site;
-- CEP;
-- endereço;
-- número;
-- complemento;
-- bairro;
-- cidade;
-- estado;
-- preferências do sistema;
-- alteração de senha.
-
-As opções administrativas são exibidas somente para os perfis autorizados.
-
----
-
-# Arquitetura
-
-O projeto utiliza uma arquitetura cliente-servidor.
+### Organização do backend
 
 ```text
-┌───────────────────────────────┐
-│        React + TypeScript     │
-│            Vite              │
-└───────────────┬───────────────┘
-                │
-                │ REST / JSON / JWT
-                ▼
-┌───────────────────────────────┐
-│       Spring Boot / Java      │
-│                               │
-│ Controller                    │
-│ Service                       │
-│ DAO                           │
-│ DTO                           │
-│ Model                         │
-│ Security                      │
-│ Specification                 │
-│ Validation                    │
-│ Utils                         │
-└───────────────┬───────────────┘
-                │
-                │ JPA / JDBC
-                ▼
-┌───────────────────────────────┐
-│      PostgreSQL / Supabase    │
-│                               │
-│           Flyway              │
-└───────────────────────────────┘
+Controller      → contrato HTTP e endpoints REST
+Service         → regras de negócio, autorização e transações
+DAO             → persistência com Spring Data JPA
+Model           → entidades JPA
+DTO             → objetos de entrada e saída
+Security        → autenticação, JWT e filtros
+Specification   → filtros e consultas dinâmicas
+Validation      → validações de domínio
+Utils           → utilitários reutilizáveis
 ```
 
 ---
 
-# Tecnologias utilizadas
+## 🧰 Tecnologias
 
-## Frontend
-
-- React 19
-- TypeScript 5
-- Vite 8
-- React Router
-- HTML5
-- CSS3
-- Fetch/API Client
-- JWT
-
-## Backend
+### Backend
 
 - Java 21
 - Spring Boot 4.1
 - Spring Web MVC
 - Spring Data JPA
 - Spring Security
-- Spring Validation
+- Bean Validation
 - Spring Mail
-- Spring Boot Actuator
-- PostgreSQL Driver
+- PostgreSQL
 - Flyway
-- SpringDoc OpenAPI
+- JWT HMAC-SHA256
 - BCrypt
-- JWT
-
-## Testes
-
+- SpringDoc OpenAPI / Swagger
+- Maven
 - JUnit 5
-- Spring Security Test
-- MockMvc
-- H2
-- Testcontainers
 
-## Banco de dados
+### Frontend
+
+- React 19
+- TypeScript 5.8
+- React Router
+- Vite
+- CSS responsivo
+- API REST
+- Access token + refresh token
+
+### Infraestrutura de dados
 
 - PostgreSQL
-- Supabase
-- Flyway
+- Supabase como serviço de banco PostgreSQL
+- Flyway para controle de schema
 
 ---
 
-# Estrutura do projeto
+## 📁 Estrutura do repositório
 
 ```text
-LeadFlow/
-│
+LeadFlow---Projeto-1/
 ├── backend/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/br/com/leadflow/
-│   │   │   │   ├── config/
-│   │   │   │   ├── controller/
-│   │   │   │   ├── dao/
-│   │   │   │   ├── dto/
-│   │   │   │   ├── exception/
-│   │   │   │   ├── model/
-│   │   │   │   ├── security/
-│   │   │   │   ├── service/
-│   │   │   │   ├── specification/
-│   │   │   │   ├── utils/
-│   │   │   │   └── validation/
-│   │   │   │
-│   │   │   └── resources/
-│   │   │       ├── db/migration/
-│   │   │       ├── application.yml
-│   │   │       ├── application-dev.yml
-│   │   │       └── application-prod.yml
-│   │   │
-│   │   └── test/
-│   │
+│   ├── src/main/java/br/com/leadflow/
+│   │   ├── config/
+│   │   ├── controller/
+│   │   ├── dao/
+│   │   ├── dto/
+│   │   ├── exception/
+│   │   ├── model/
+│   │   ├── security/
+│   │   ├── service/
+│   │   ├── specification/
+│   │   ├── utils/
+│   │   └── validation/
+│   ├── src/main/resources/
+│   │   ├── db/migration/
+│   │   ├── application.yml
+│   │   ├── application-dev.yml
+│   │   └── application-prod.yml
 │   └── pom.xml
 │
 ├── frontend/
@@ -359,7 +206,6 @@ LeadFlow/
 │   │   ├── services/
 │   │   ├── styles/
 │   │   └── types/
-│   │
 │   ├── package.json
 │   └── vite.config.ts
 │
@@ -371,107 +217,158 @@ LeadFlow/
 └── README.md
 ```
 
+> Pastas de build e dependências, como `backend/target`, `frontend/node_modules` e `frontend/dist`, não devem ser versionadas.
+
 ---
 
-# Pré-requisitos
+## ✅ Pré-requisitos
 
 Antes de executar o projeto, instale:
 
-- **Java 21**
-- **Maven 3.9+**
-- **Node.js 22+**
+- **Git**
+- **Java JDK 21**
+- **Maven 3.9 ou superior**
+- **Node.js 22 ou superior**
 - **npm**
-- acesso a um banco **PostgreSQL**
+- **Eclipse IDE** para desenvolvimento do backend, caso deseje utilizar IDE
+- acesso a um banco **PostgreSQL**, como o Supabase
 
-O banco pode ser hospedado localmente ou em um serviço PostgreSQL compatível, como o **Supabase**.
+Confira as versões instaladas:
+
+```bash
+git --version
+java -version
+mvn -version
+node -v
+npm -v
+```
+
+O Maven deve estar utilizando **Java 21**.
 
 ---
 
-# Clonando o projeto
+## 🚀 Instalação rápida
+
+Clone o repositório:
 
 ```bash
 git clone https://github.com/Danielalves33147/LeadFlow---Projeto-1.git
 cd LeadFlow---Projeto-1
 ```
 
+Depois siga esta ordem:
+
+1. configure o banco PostgreSQL/Supabase;
+2. configure as variáveis de ambiente do backend;
+3. inicie o backend;
+4. instale as dependências do frontend;
+5. inicie o frontend;
+6. abra `http://localhost:5173`.
+
 ---
 
-# Configuração do backend
+## 🔐 Configuração do banco e variáveis de ambiente
 
-O backend utiliza variáveis de ambiente para conexão com banco, autenticação e envio de e-mails.
+O backend lê configurações por variáveis de ambiente. O `application.yml` também permite carregar um arquivo `.env` opcional.
 
-Crie um arquivo `.env` na raiz utilizada pelo backend ou configure as variáveis diretamente no sistema operacional.
+### Usando um arquivo `.env`
 
-Exemplo:
+Crie o arquivo:
+
+```text
+backend/.env
+```
+
+Exemplo seguro:
 
 ```env
-DB_HOST=seu-host-postgresql
+DB_HOST=SEU_HOST_POSTGRES
 DB_PORT=5432
 DB_NAME=postgres
-DB_USERNAME=seu_usuario
-DB_PASSWORD=sua_senha
+DB_USERNAME=SEU_USUARIO
+DB_PASSWORD=SUA_SENHA
 
-JWT_SECRET=troque-por-um-segredo-aleatorio-com-pelo-menos-32-caracteres
+JWT_SECRET=COLOQUE_UM_SEGREDO_LONGO_E_ALEATORIO_AQUI
 JWT_EXPIRATION=900
 JWT_REFRESH_EXPIRATION=604800
 
 CORS_ALLOWED_ORIGINS=http://localhost:5173
-
 DEMO_SEED=false
 SPRING_PROFILES_ACTIVE=dev
 
 FRONTEND_URL=http://localhost:5173
-
 EMAIL_VERIFICATION_EXPIRATION=86400
 INVITATION_EXPIRATION=86400
+
+EMAIL_MODE=console
 ```
 
-> Nunca envie o arquivo `.env` real para o Git.
+> **Nunca versione o arquivo `.env` real.** Use apenas valores de exemplo em arquivos públicos.
 
----
+### Configuração do Supabase
 
-# Configuração de e-mail
+No painel do Supabase, obtenha os dados de conexão PostgreSQL e preencha:
 
-O LeadFlow suporta dois modos.
+```env
+DB_HOST=...
+DB_PORT=5432
+DB_NAME=postgres
+DB_USERNAME=...
+DB_PASSWORD=...
+```
 
-## Console
+Não é necessário criar manualmente as tabelas de uma instalação nova. O Flyway utiliza as migrations de:
 
-Recomendado para desenvolvimento.
+```text
+backend/src/main/resources/db/migration/
+```
+
+### E-mail em desenvolvimento
+
+Para desenvolver sem um servidor SMTP:
 
 ```env
 EMAIL_MODE=console
 ```
 
-Os códigos e mensagens são exibidos no terminal do backend.
+Nesse modo, códigos de confirmação e recuperação são exibidos no console do backend.
 
-## SMTP
+### E-mail por SMTP
 
-Para envio real de e-mails:
+Para envio real:
 
 ```env
 EMAIL_MODE=smtp
-
 MAIL_HOST=smtp.seuprovedor.com
 MAIL_PORT=587
-MAIL_USERNAME=seu_email
-MAIL_PASSWORD=sua_senha_de_aplicativo
-EMAIL_FROM=seu_email
+MAIL_USERNAME=SEU_EMAIL
+MAIL_PASSWORD=SUA_SENHA_DE_APLICATIVO
+EMAIL_FROM=SEU_EMAIL
 ```
-
-O SMTP é utilizado em funcionalidades como confirmação de conta, convites e recuperação de senha.
 
 ---
 
-# Executando o backend
+## ☕ Executando o backend
 
-Abra um terminal:
+Entre na pasta do backend:
 
 ```bash
 cd backend
-mvn clean spring-boot:run
 ```
 
-Por padrão:
+Execute os testes:
+
+```bash
+mvn clean test
+```
+
+Inicie a aplicação:
+
+```bash
+mvn spring-boot:run
+```
+
+Quando a inicialização terminar, o backend estará disponível em:
 
 ```text
 http://localhost:8080
@@ -479,17 +376,194 @@ http://localhost:8080
 
 ---
 
-# Configuração do frontend
+## 🌘 Executando no Eclipse
 
-Dentro da pasta `frontend`, crie um arquivo `.env`:
+Esta seção mostra como importar e executar o backend Java no **Eclipse IDE**.
 
-```env
-VITE_API_URL=http://localhost:8080/api/v1
+### 1. Configurar o JDK 21
+
+No Eclipse, acesse:
+
+```text
+Window > Preferences > Java > Installed JREs
 ```
+
+Clique em:
+
+```text
+Add... > Standard VM
+```
+
+Selecione a pasta do **JDK 21**, conclua a configuração e marque-o como JRE padrão.
+
+Confira também:
+
+```text
+Window > Preferences > Java > Compiler
+```
+
+Utilize o nível de compatibilidade **21**, quando disponível na instalação.
+
+### 2. Importar o backend como projeto Maven
+
+Acesse:
+
+```text
+File > Import...
+```
+
+Escolha:
+
+```text
+Maven > Existing Maven Projects
+```
+
+Em **Root Directory**, selecione:
+
+```text
+LeadFlow---Projeto-1/backend
+```
+
+O Eclipse deverá encontrar automaticamente:
+
+```text
+pom.xml
+```
+
+Marque o projeto e clique em **Finish**.
+
+Aguarde o Eclipse/Maven baixar e indexar as dependências.
+
+### 3. Atualizar as dependências Maven
+
+Caso apareçam erros de dependências após a importação:
+
+1. clique com o botão direito no projeto;
+2. abra **Maven**;
+3. escolha **Update Project...**;
+4. se necessário, marque **Force Update of Snapshots/Releases**;
+5. confirme em **OK**.
+
+### 4. Conferir o Java utilizado pelo projeto
+
+Abra:
+
+```text
+Project > Properties > Java Build Path > Libraries
+```
+
+Confirme que o projeto utiliza **Java 21**.
+
+Confira também:
+
+```text
+Project > Properties > Java Compiler
+```
+
+A versão deve ser **21**.
+
+### 5. Configurar as variáveis no Eclipse
+
+Há duas opções.
+
+#### Opção A — arquivo `backend/.env`
+
+Crie o `.env` dentro da pasta `backend` e mantenha o diretório de trabalho da aplicação apontando para a pasta que contém o `pom.xml`.
+
+#### Opção B — variáveis pela configuração de execução
+
+Abra:
+
+```text
+Run > Run Configurations...
+```
+
+Selecione a configuração da aplicação e use a aba **Environment** para adicionar, por exemplo:
+
+```text
+DB_HOST
+DB_PORT
+DB_NAME
+DB_USERNAME
+DB_PASSWORD
+JWT_SECRET
+CORS_ALLOWED_ORIGINS
+DEMO_SEED
+SPRING_PROFILES_ACTIVE
+FRONTEND_URL
+EMAIL_MODE
+```
+
+Para SMTP, adicione também:
+
+```text
+MAIL_HOST
+MAIL_PORT
+MAIL_USERNAME
+MAIL_PASSWORD
+EMAIL_FROM
+```
+
+### 6. Executar o Spring Boot
+
+Localize:
+
+```text
+src/main/java/br/com/leadflow/LeadFlowApplication.java
+```
+
+Clique com o botão direito no arquivo.
+
+Se estiver usando **Spring Tools / STS**:
+
+```text
+Run As > Spring Boot App
+```
+
+Sem Spring Tools:
+
+```text
+Run As > Java Application
+```
+
+A aplicação pode ser iniciada como Java Application porque `LeadFlowApplication` contém o método `main` do Spring Boot.
+
+Quando o console exibir mensagens semelhantes a:
+
+```text
+Tomcat started on port 8080
+Started LeadFlowApplication
+```
+
+o backend estará pronto.
+
+### 7. Parar a aplicação
+
+Na aba **Console**, clique no botão vermelho **Terminate**.
+
+### 8. Clonar diretamente pelo Eclipse
+
+Também é possível clonar o projeto pela IDE:
+
+```text
+File > Import... > Git > Projects from Git > Clone URI
+```
+
+Use:
+
+```text
+https://github.com/Danielalves33147/LeadFlow---Projeto-1.git
+```
+
+Selecione a branch `main`, conclua o clone e depois importe a pasta `backend` como **Existing Maven Project**.
+
+> O frontend não é um projeto Maven. Ele deve ser iniciado com Node.js/npm, usando um terminal externo ou o terminal integrado do Eclipse, caso disponível.
 
 ---
 
-# Executando o frontend
+## ⚛️ Executando o frontend
+
+Em outro terminal, a partir da raiz do repositório:
 
 ```bash
 cd frontend
@@ -497,15 +571,31 @@ npm install
 npm run dev
 ```
 
-O Vite normalmente disponibilizará a aplicação em:
+O Vite normalmente disponibiliza a aplicação em:
 
 ```text
 http://localhost:5173
 ```
 
+Backend e frontend devem permanecer executando simultaneamente.
+
+### URL da API
+
+A aplicação trabalha com a API em:
+
+```text
+http://localhost:8080/api/v1
+```
+
+Quando necessário, configure o frontend através de um arquivo `.env` com:
+
+```env
+VITE_API_URL=http://localhost:8080/api/v1
+```
+
 ---
 
-# Banco de dados e Flyway
+## 🗃️ Migrations com Flyway
 
 As migrations ficam em:
 
@@ -513,97 +603,55 @@ As migrations ficam em:
 backend/src/main/resources/db/migration/
 ```
 
-O Flyway executa automaticamente as migrations na inicialização do backend.
+O Flyway verifica e aplica as migrations automaticamente durante a inicialização do backend.
 
-O projeto possui migrations versionadas para a criação da estrutura principal e uma migration repetível de compatibilidade:
+O projeto também possui a migration repetível:
 
 ```text
 R__ensure_settings_and_password_change.sql
 ```
 
-Essa migration garante estruturas relacionadas às configurações da empresa e ao processo de alteração/recuperação de senha, podendo ser executada de forma idempotente.
+Ela mantém compatibilidade das estruturas relacionadas às configurações da empresa e aos tokens de alteração/recuperação de senha.
 
-Para ambientes existentes, o Flyway preserva o histórico de migrations já aplicadas.
+### Regra importante
 
----
-
-# Principais rotas do frontend
-
-| Rota | Função |
-|---|---|
-| `/login` | Login |
-| `/cadastro` | Cadastro |
-| `/confirmar-email` | Confirmação de e-mail |
-| `/ativar-conta` | Ativação de conta |
-| `/esqueci-senha` | Recuperação de senha |
-| `/dashboard` | Dashboard |
-| `/leads` | Lista de Leads |
-| `/leads/funil` | Funil |
-| `/leads/:leadId` | Detalhes do Lead |
-| `/interacoes` | Interações |
-| `/tarefas` | Tarefas |
-| `/equipe` | Equipe |
-| `/pontuacao/regras` | Regras de pontuação |
-| `/ranking-filiais` | Ranking |
-| `/configuracoes` | Configurações |
-
-As rotas são protegidas de acordo com a autenticação e o perfil do usuário.
+Não altere migrations versionadas que já tenham sido aplicadas em um banco utilizado pela aplicação. Para alterações futuras, crie uma nova migration ou utilize uma migration repetível quando tecnicamente apropriado.
 
 ---
 
-# API e documentação
+## 📡 API e Swagger
 
 Com o backend em execução:
 
-### Swagger UI
-
-```text
-http://localhost:8080/swagger-ui.html
-```
-
-### OpenAPI
-
-```text
-http://localhost:8080/v3/api-docs
-```
-
-### Health Check
-
-```text
-http://localhost:8080/actuator/health
-```
+| Recurso | Endereço |
+|---|---|
+| Backend | `http://localhost:8080` |
+| API | `http://localhost:8080/api/v1` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| OpenAPI | `http://localhost:8080/v3/api-docs` |
+| Health | `http://localhost:8080/actuator/health` |
+| Frontend | `http://localhost:5173` |
 
 ---
 
-# Testes e validação
+## 🧪 Testes e build
 
-## Backend
-
-Executar testes:
+### Backend
 
 ```bash
 cd backend
 mvn clean test
 ```
 
-Compilar:
-
-```bash
-mvn clean package
-```
-
----
-
-## Frontend
-
-Verificação de tipos:
+### Frontend — validação TypeScript
 
 ```bash
 cd frontend
+npm install
 npm run typecheck
 ```
 
-Build de produção:
+### Frontend — build de produção
 
 ```bash
 npm run build
@@ -611,100 +659,165 @@ npm run build
 
 ---
 
-# Segurança
+## 🛠️ Problemas comuns
 
-O projeto utiliza diferentes mecanismos de segurança:
+<details>
+<summary><strong>Java ou Maven não encontrado</strong></summary>
 
-- autenticação JWT;
-- refresh tokens;
-- BCrypt para senhas;
-- Spring Security;
-- rotas protegidas;
-- controle de acesso baseado em perfil;
-- validação de permissões no backend;
-- tokens temporários;
-- expiração de tokens;
-- invalidação de sessões após recuperação de senha;
-- configuração de CORS por ambiente;
-- variáveis sensíveis através de ambiente.
+Confira a instalação e as variáveis do sistema:
 
-Para produção, recomenda-se:
+```bash
+java -version
+mvn -version
+```
 
-- utilizar HTTPS;
-- utilizar segredos fortes;
-- nunca versionar arquivos `.env`;
-- utilizar senhas diferentes por ambiente;
-- restringir CORS;
-- utilizar um gerenciador de segredos;
-- desativar dados de demonstração.
+O Maven deve apontar para um **JDK 21**.
+
+</details>
+
+<details>
+<summary><strong>Eclipse está usando uma versão errada do Java</strong></summary>
+
+Verifique:
+
+```text
+Window > Preferences > Java > Installed JREs
+```
+
+E, no projeto:
+
+```text
+Project > Properties > Java Build Path
+```
+
+</details>
+
+<details>
+<summary><strong>Backend não conecta ao Supabase</strong></summary>
+
+Confira as seguintes variáveis:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+Também confirme se a máquina possui acesso à internet e se os dados são os mesmos fornecidos pelo Supabase.
+
+</details>
+
+<details>
+<summary><strong>Porta 8080 já está em uso</strong></summary>
+
+Finalize o processo que está utilizando a porta ou configure outra:
+
+```env
+SERVER_PORT=8081
+```
+
+Se alterar a porta, atualize também a URL da API utilizada pelo frontend.
+
+</details>
+
+<details>
+<summary><strong>Frontend não consegue acessar o backend</strong></summary>
+
+Confirme se:
+
+- o backend está em execução;
+- a API está apontando para `http://localhost:8080/api/v1`;
+- `CORS_ALLOWED_ORIGINS` contém `http://localhost:5173`.
+
+</details>
+
+<details>
+<summary><strong>Código de recuperação de senha não chega por e-mail</strong></summary>
+
+Para desenvolvimento, utilize:
+
+```env
+EMAIL_MODE=console
+```
+
+O código será exibido no console do backend. Para envio real, confira as configurações SMTP.
+
+</details>
 
 ---
 
-# Fluxo resumido
+## 🛡️ Segurança
+
+O projeto aplica práticas como:
+
+- senhas armazenadas com BCrypt;
+- JWT de curta duração;
+- refresh tokens armazenados como hash;
+- autenticação stateless;
+- autorização aplicada no backend;
+- invalidação de sessões após redefinição de senha;
+- CORS configurável por ambiente;
+- tratamento padronizado de erros;
+- separação entre configuração e código-fonte.
+
+### Boas práticas para o repositório
+
+Não versione:
 
 ```text
-Usuário
-  │
-  ├── Login / Cadastro / Recuperação
-  │
-  ▼
-Frontend React
-  │
-  │ JWT
-  ▼
-Spring Security
-  │
-  ▼
-Controllers
-  │
-  ▼
-Services
-  │
-  ├── Regras de negócio
-  ├── Permissões
-  └── Validações
-  │
-  ▼
-DAOs / JPA
-  │
-  ▼
-PostgreSQL / Supabase
+.env
+backend/target/
+frontend/node_modules/
+frontend/dist/
+*.log
+```
+
+Nunca coloque senhas, tokens ou segredos diretamente no README ou no código-fonte.
+
+---
+
+## 🔄 Fluxo básico com Git
+
+Depois de realizar alterações:
+
+```bash
+git status
+git add -A
+git commit -m "Descreva a alteração realizada"
+git push origin main
+```
+
+Antes do commit, é recomendável verificar:
+
+```bash
+git diff --cached --check
 ```
 
 ---
 
-# Objetivo acadêmico
+## 🎓 Contexto acadêmico
 
-O projeto demonstra, de forma integrada:
+O **LeadFlow** foi desenvolvido como projeto acadêmico com foco na integração de conhecimentos de:
 
-- programação orientada a objetos;
-- desenvolvimento de API REST;
 - desenvolvimento frontend;
+- desenvolvimento backend com Java;
+- APIs REST;
 - banco de dados relacional;
 - autenticação e autorização;
-- arquitetura em camadas;
-- integração frontend/backend;
-- controle de versão com Git;
-- migrations de banco;
-- tratamento de erros;
-- validação de dados;
+- migrations e persistência;
 - regras de negócio;
-- documentação de API.
+- organização em camadas;
+- versionamento com Git/GitHub;
+- construção de uma aplicação comercial completa.
+
+O projeto busca demonstrar não apenas o funcionamento das telas, mas também uma arquitetura organizada, responsabilidades bem definidas e integração real entre frontend, backend e banco de dados.
 
 ---
 
-# Autores
+<div align="center">
 
-Michael Delego e Daniel Alves
+**LeadFlow — Projeto Integrador**
 
-Projeto desenvolvido para fins acadêmicos.
+Desenvolvido com Java, Spring Boot, React, TypeScript e PostgreSQL.
 
-Repositório:
-
-https://github.com/Danielalves33147/LeadFlow---Projeto-1
-
----
-
-## Licença
-
-Este projeto foi desenvolvido para fins acadêmicos e educacionais.
+</div>
