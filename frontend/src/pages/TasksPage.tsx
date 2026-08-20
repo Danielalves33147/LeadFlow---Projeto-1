@@ -32,6 +32,7 @@ import {
   Card,
   EmptyState,
   LoadingPanel,
+  Modal,
   PageHeader,
   Pagination,
   useToast,
@@ -395,8 +396,8 @@ function dateInputValue(date: Date) {
 }
 
 export function TasksPage() {
-  const toast = useToast();
   const { user } = useAuth();
+  const { push: pushToast } = useToast();
 
   const [data, setData] = useState<PageResponse<TaskResponse>>({
     content: [],
@@ -426,6 +427,7 @@ export function TasksPage() {
 
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<TaskResponse | null>(null);
+  const [details, setDetails] = useState<TaskResponse | null>(null);
   const [month, setMonth] = useState(() => new Date());
   const [calendarDate, setCalendarDate] = useState('');
 
@@ -443,21 +445,13 @@ export function TasksPage() {
       return;
     }
 
-    let cancelled = false;
-
     const loadFilters = async () => {
       try {
-        const leadPage = await leadApi.list({
-          size: 100,
-          sort: 'name,asc',
-        });
-
-        if (cancelled) {
-          return;
-        }
-
+        const leadPage = await leadApi.list({ size: 100, sort: 'name,asc' });
         setLeads(leadPage.content);
 
+        // O vendedor só pode trabalhar com os próprios Leads e tarefas.
+        // Não chamamos endpoints administrativos de filiais/equipe para esse perfil.
         if (user.role === 'SELLER') {
           setBranches([]);
           setUsers([]);
@@ -469,30 +463,19 @@ export function TasksPage() {
           userApi.list(),
         ]);
 
-        if (cancelled) {
-          return;
-        }
-
         setBranches(branchList);
         setUsers(userList);
       } catch (cause) {
-        if (cancelled) {
-          return;
-        }
-
-        setError(
-          (cause as ApiError).message ||
-            'Não foi possível carregar os filtros.',
+        pushToast(
+          'error',
+          'Não foi possível carregar os filtros',
+          (cause as ApiError).message,
         );
       }
     };
 
     void loadFilters();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
+  }, [pushToast, user]);
 
   const loadList = () => {
     const range = dateRange(dueDate);
@@ -568,7 +551,7 @@ export function TasksPage() {
         await taskApi.cancel(task.id, 'Cancelada pelo usuário');
       }
 
-      toast.push(
+      pushToast(
         'success',
         kind === 'complete' ? 'Tarefa concluída' : 'Tarefa cancelada',
         task.title,
@@ -580,7 +563,7 @@ export function TasksPage() {
         await loadCalendar();
       }
     } catch (cause) {
-      toast.push(
+      pushToast(
         'error',
         'Não foi possível atualizar',
         (cause as ApiError).message,
@@ -696,7 +679,7 @@ export function TasksPage() {
       {mode === 'list' ? (
         <>
           <div className="tasks-filter-bar">
-            <div className="tasks-filter-grid">
+            <div className={`tasks-filter-grid ${user?.role === 'SELLER' ? 'tasks-filter-grid-seller' : ''}`}>
               <div className="tasks-title-filter">
                 <svg
                   width="15"
@@ -740,29 +723,29 @@ export function TasksPage() {
               />
 
               {user?.role !== 'SELLER' && (
-                <SearchableSelect
-                  value={responsibleId}
-                  placeholder="Todos os responsáveis"
-                  options={responsibleOptions}
-                  onChange={(value) => {
-                    setResponsibleId(value);
-                    setPage(0);
-                  }}
-                  ariaLabel="Filtrar por responsável"
-                />
-              )}
+                <>
+                  <SearchableSelect
+                    value={responsibleId}
+                    placeholder="Todos os responsáveis"
+                    options={responsibleOptions}
+                    onChange={(value) => {
+                      setResponsibleId(value);
+                      setPage(0);
+                    }}
+                    ariaLabel="Filtrar por responsável"
+                  />
 
-              {user?.role !== 'SELLER' && (
-                <SearchableSelect
-                  value={branchId}
-                  placeholder="Todas as filiais"
-                  options={branchOptions}
-                  onChange={(value) => {
-                    setBranchId(value);
-                    setPage(0);
-                  }}
-                  ariaLabel="Filtrar por filial"
-                />
+                  <SearchableSelect
+                    value={branchId}
+                    placeholder="Todas as filiais"
+                    options={branchOptions}
+                    onChange={(value) => {
+                      setBranchId(value);
+                      setPage(0);
+                    }}
+                    ariaLabel="Filtrar por filial"
+                  />
+                </>
               )}
 
               <SearchableSelect
@@ -836,19 +819,26 @@ export function TasksPage() {
                       <th>Filial</th>
                       <th>Data e horário</th>
                       <th>Status</th>
-                      <th aria-label="Ações" />
+                      <th className="tasks-actions-header">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.content.map((task) => (
-                      <tr key={task.id}>
+                      <tr
+                        key={task.id}
+                        className="tasks-task-row"
+                        tabIndex={0}
+                        aria-label={`Abrir detalhes da tarefa ${task.title}`}
+                        onClick={() => setDetails(task)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setDetails(task);
+                          }
+                        }}
+                      >
                         <td>
                           <strong>{task.title}</strong>
-                          {task.description && (
-                            <div className="lf-table-sub">
-                              {task.description.slice(0, 80)}
-                            </div>
-                          )}
                         </td>
                         <td>{task.leadName}</td>
                         <td>{task.responsibleUserName}</td>
@@ -859,7 +849,11 @@ export function TasksPage() {
                             {taskStatusLabels[task.status]}
                           </Badge>
                         </td>
-                        <td className="tasks-actions-cell">
+                        <td
+                          className="tasks-actions-cell"
+                          onClick={(event) => event.stopPropagation()}
+                          onKeyDown={(event) => event.stopPropagation()}
+                        >
                           <TaskActions
                             task={task}
                             onEdit={() => setEdit(task)}
@@ -1002,7 +996,7 @@ export function TasksPage() {
                               ? 'completed'
                               : ''
                         }`}
-                        onClick={() => setEdit(task)}
+                        onClick={() => setDetails(task)}
                       >
                         {task.title}
                       </button>
@@ -1025,6 +1019,77 @@ export function TasksPage() {
           </div>
         </>
       )}
+
+      <Modal
+        open={Boolean(details)}
+        title={details?.title ?? 'Detalhes da tarefa'}
+        description="Visualize todas as informações registradas nesta tarefa."
+        size="lg"
+        onClose={() => setDetails(null)}
+        footer={
+          details ? (
+            <>
+              <Button variant="secondary" onClick={() => setDetails(null)}>
+                Fechar
+              </Button>
+              <Button
+                onClick={() => {
+                  setEdit(details);
+                  setDetails(null);
+                }}
+              >
+                Editar tarefa
+              </Button>
+            </>
+          ) : undefined
+        }
+      >
+        {details && (
+          <div className="tasks-details">
+            <div className="tasks-details-grid">
+              <div className="tasks-details-item">
+                <span>Lead</span>
+                <strong>{details.leadName || 'Não informado'}</strong>
+              </div>
+              <div className="tasks-details-item">
+                <span>Responsável</span>
+                <strong>{details.responsibleUserName || 'Não informado'}</strong>
+              </div>
+              <div className="tasks-details-item">
+                <span>Filial</span>
+                <strong>{details.branchName || 'Não informada'}</strong>
+              </div>
+              <div className="tasks-details-item">
+                <span>Data e horário</span>
+                <strong>{fmtDateTime(details.dueAt)}</strong>
+              </div>
+              <div className="tasks-details-item">
+                <span>Status</span>
+                <div>
+                  <Badge tone={taskBadge(details.status)}>
+                    {taskStatusLabels[details.status]}
+                  </Badge>
+                </div>
+              </div>
+              <div className="tasks-details-item">
+                <span>Criada em</span>
+                <strong>{fmtDateTime(details.createdAt)}</strong>
+              </div>
+              {details.completedAt && (
+                <div className="tasks-details-item">
+                  <span>Concluída em</span>
+                  <strong>{fmtDateTime(details.completedAt)}</strong>
+                </div>
+              )}
+            </div>
+
+            <div className="tasks-details-description">
+              <span>Descrição</span>
+              <p>{details.description?.trim() || 'Nenhuma descrição informada.'}</p>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       <TaskForm
         open={open || Boolean(edit)}

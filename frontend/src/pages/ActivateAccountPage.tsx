@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Button, Field, Input, LoadingPanel } from '../components/ui';
+import { isStrongPassword, PasswordStrength } from '../components/PasswordStrength';
 import { ApiError, invitationApi } from '../services/api';
 import { roleLabels } from '../services/format';
 import type { InvitationValidationResponse } from '../types';
 
 type ValidationState = 'loading' | 'valid' | 'invalid';
-function strength(value: string) { let s=0; if(value.length>=8)s++; if(/[A-Z]/.test(value))s++; if(/[a-z]/.test(value))s++; if(/\d/.test(value))s++; if(/[^A-Za-z0-9]/.test(value))s++; return s<3?'Fraca':s<5?'Boa':'Forte'; }
-
 export function ActivateAccountPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -34,6 +33,7 @@ export function ActivateAccountPage() {
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault(); setError(''); setFieldError('');
+    if (!isStrongPassword(password)) { setFieldError('A senha ainda não atende a todos os requisitos de segurança.'); return; }
     if (password !== confirmPassword) { setFieldError('As senhas não coincidem.'); return; }
     setSaving(true);
     try { await invitationApi.accept({ token, password, confirmPassword }); setSuccess(true); }
@@ -62,8 +62,19 @@ export function ActivateAccountPage() {
           <div><div><strong>Filial principal</strong><span>{invitation.primaryBranchName || 'Não informada'}</span></div></div>
         </div>
         {error && <Alert tone="error">{error}</Alert>}
-        <Field label="Nova senha" error={fieldError} helper={`Força: ${strength(password)}. Use 8+ caracteres com maiúscula, minúscula, número e símbolo.`}><Input required minLength={8} maxLength={72} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
-        <Field label="Confirmar nova senha"><Input required minLength={8} maxLength={72} type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} /></Field>
+        <Field label="Nova senha" error={fieldError}>
+          <>
+            <Input required minLength={8} maxLength={72} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <PasswordStrength value={password} />
+          </>
+        </Field>
+        <Field label="Confirmar nova senha">
+          <>
+            <Input required minLength={8} maxLength={72} type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            {confirmPassword && password !== confirmPassword && <span className="lf-password-match lf-password-match-error">As senhas ainda não coincidem.</span>}
+            {confirmPassword && password === confirmPassword && <span className="lf-password-match lf-password-match-ok">As senhas coincidem.</span>}
+          </>
+        </Field>
         <Button size="lg" type="submit" disabled={saving}>{saving ? 'Ativando conta...' : 'Ativar minha conta'}</Button>
       </form>}
       {validationState === 'valid' && success && <><Alert>Conta ativada com sucesso. Agora você já pode entrar com o e-mail do convite e a senha que acabou de definir.</Alert><Button size="lg" onClick={() => navigate('/login', { replace: true })}>Entrar no LeadFlow</Button></>}

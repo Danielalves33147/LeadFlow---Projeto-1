@@ -11,9 +11,10 @@ import {
   Select,
   useToast,
 } from '../components/ui';
+import { isStrongPassword, PasswordStrength } from '../components/PasswordStrength';
 import { ApiError, authApi, settingsApi } from '../services/api';
 import { formatCep, formatCnpj, formatPhone, roleLabels } from '../services/format';
-import { applyPreferences } from '../services/preferences';
+import { applyPreferences, getDefaultPeriodDays, getTimezone } from '../services/preferences';
 import type { SettingsResponse } from '../types';
 import '../styles/settings.css';
 
@@ -55,10 +56,10 @@ export function SettingsPage() {
   const toast = useToast();
   const [data, setData] = useState<SettingsResponse | null>(null);
   const [company, setCompany] = useState<CompanyForm>(emptyCompany);
-  const [preferences, setPreferences] = useState<PreferenceForm>({
-    defaultPeriodDays: 30,
-    timezone: 'America/Bahia',
-  });
+  const [preferences, setPreferences] = useState<PreferenceForm>(() => ({
+    defaultPeriodDays: getDefaultPeriodDays(),
+    timezone: getTimezone(),
+  }));
   const [profile, setProfile] = useState({
     name: user?.name ?? '',
     email: user?.email ?? '',
@@ -80,10 +81,24 @@ export function SettingsPage() {
   });
 
   const isAdmin = user?.role === 'ADMIN';
+  const canAccessPreferences = user?.role !== 'SELLER';
 
   const load = async () => {
     setLoading(true);
     setError('');
+
+    // Dados corporativos continuam restritos ao administrador.
+    // As preferências de exibição são pessoais para os demais perfis
+    // e ficam salvas neste navegador, sem alterar a configuração da empresa.
+    if (!isAdmin) {
+      setData(null);
+      setPreferences({
+        defaultPeriodDays: getDefaultPeriodDays(),
+        timezone: getTimezone(),
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       const settings = await settingsApi.get();
@@ -114,8 +129,8 @@ export function SettingsPage() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [isAdmin]);
 
   useEffect(() => {
     if (!user) {
@@ -157,15 +172,18 @@ export function SettingsPage() {
   }, [profile, user]);
 
   const preferencesDirty = useMemo(() => {
-    if (!data) {
-      return false;
+    if (isAdmin && data) {
+      return (
+        preferences.defaultPeriodDays !== data.defaultPeriodDays ||
+        preferences.timezone !== data.timezone
+      );
     }
 
     return (
-      preferences.defaultPeriodDays !== data.defaultPeriodDays ||
-      preferences.timezone !== data.timezone
+      preferences.defaultPeriodDays !== getDefaultPeriodDays() ||
+      preferences.timezone !== getTimezone()
     );
-  }, [data, preferences]);
+  }, [data, isAdmin, preferences]);
 
   const goToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -246,6 +264,11 @@ export function SettingsPage() {
   };
 
   const confirmPasswordChange = async () => {
+    if (!isStrongPassword(passwordForm.password)) {
+      toast.push('error', 'Senha fraca', 'A nova senha ainda não atende a todos os requisitos de segurança.');
+      return;
+    }
+
     if (passwordForm.password !== passwordForm.confirmPassword) {
       toast.push('error', 'Senhas diferentes', 'A confirmação deve ser igual à nova senha.');
       return;
@@ -273,17 +296,24 @@ export function SettingsPage() {
     setSavingPreferences(true);
 
     try {
-      const updated = await settingsApi.updatePreferences(preferences);
-      setData(updated);
-      setPreferences({
-        defaultPeriodDays: updated.defaultPeriodDays,
-        timezone: updated.timezone,
-      });
-      applyPreferences(updated.defaultPeriodDays, updated.timezone);
+      if (isAdmin) {
+        const updated = await settingsApi.updatePreferences(preferences);
+        setData(updated);
+        setPreferences({
+          defaultPeriodDays: updated.defaultPeriodDays,
+          timezone: updated.timezone,
+        });
+        applyPreferences(updated.defaultPeriodDays, updated.timezone);
+      } else {
+        applyPreferences(preferences.defaultPeriodDays, preferences.timezone);
+      }
+
       toast.push(
         'success',
         'Preferências atualizadas',
-        'O período padrão e o fuso horário serão usados nas próximas telas abertas.',
+        isAdmin
+          ? 'O período padrão e o fuso horário foram atualizados.'
+          : 'Suas preferências de período e fuso horário foram salvas neste navegador.',
       );
     } catch (cause) {
       toast.push('error', 'Não foi possível salvar', (cause as ApiError).message);
@@ -335,13 +365,15 @@ export function SettingsPage() {
           >
             Informações de Perfis
           </button>
-          <button
-            type="button"
-            className={activeSection === 'preferences' ? 'active' : ''}
-            onClick={() => goToSection('preferences')}
-          >
-            Preferências do Sistema
-          </button>
+          {canAccessPreferences && (
+            <button
+              type="button"
+              className={activeSection === 'preferences' ? 'active' : ''}
+              onClick={() => goToSection('preferences')}
+            >
+              Preferências do Sistema
+            </button>
+          )}
         </nav>
 
         <div className="lf-settings-content">
@@ -640,35 +672,47 @@ export function SettingsPage() {
                         />
                       </Field>
 
-                      <Field
-                        label="Nova senha"
-                        helper="Use ao menos 8 caracteres, com maiúscula, minúscula, número e símbolo."
-                      >
-                        <Input
-                          type="password"
-                          autoComplete="new-password"
-                          value={passwordForm.password}
-                          onChange={(event) =>
-                            setPasswordForm((current) => ({
-                              ...current,
-                              password: event.target.value,
-                            }))
-                          }
-                        />
+                      <Field label="Nova senha">
+                        <>
+                          <Input
+                            type="password"
+                            autoComplete="new-password"
+                            minLength={8}
+                            maxLength={72}
+                            value={passwordForm.password}
+                            onChange={(event) =>
+                              setPasswordForm((current) => ({
+                                ...current,
+                                password: event.target.value,
+                              }))
+                            }
+                          />
+                          <PasswordStrength value={passwordForm.password} />
+                        </>
                       </Field>
 
                       <Field label="Confirmar nova senha">
-                        <Input
-                          type="password"
-                          autoComplete="new-password"
-                          value={passwordForm.confirmPassword}
-                          onChange={(event) =>
-                            setPasswordForm((current) => ({
-                              ...current,
-                              confirmPassword: event.target.value,
-                            }))
-                          }
-                        />
+                        <>
+                          <Input
+                            type="password"
+                            autoComplete="new-password"
+                            minLength={8}
+                            maxLength={72}
+                            value={passwordForm.confirmPassword}
+                            onChange={(event) =>
+                              setPasswordForm((current) => ({
+                                ...current,
+                                confirmPassword: event.target.value,
+                              }))
+                            }
+                          />
+                          {passwordForm.confirmPassword && passwordForm.password !== passwordForm.confirmPassword && (
+                            <span className="lf-password-match lf-password-match-error">As senhas ainda não coincidem.</span>
+                          )}
+                          {passwordForm.confirmPassword && passwordForm.password === passwordForm.confirmPassword && (
+                            <span className="lf-password-match lf-password-match-ok">As senhas coincidem.</span>
+                          )}
+                        </>
                       </Field>
                     </div>
 
@@ -677,8 +721,8 @@ export function SettingsPage() {
                         disabled={
                           changingPassword ||
                           passwordForm.token.length !== 6 ||
-                          !passwordForm.password ||
-                          !passwordForm.confirmPassword
+                          !isStrongPassword(passwordForm.password) ||
+                          passwordForm.password !== passwordForm.confirmPassword
                         }
                         onClick={confirmPasswordChange}
                       >
@@ -730,82 +774,89 @@ export function SettingsPage() {
             </section>
           </Card>
 
-          {data && (
+          {canAccessPreferences && (
             <Card className="lf-settings-section">
               <section id="preferences" className="lf-settings-anchor">
-                <div className="lf-settings-section-head">
-                  <div>
-                    <h2 className="lf-card-title">Preferências do Sistema</h2>
-                    <p className="lf-card-subtitle">
-                      Defina como períodos e horários devem aparecer para você.
-                    </p>
-                  </div>
+              <div className="lf-settings-section-head">
+                <div>
+                  <h2 className="lf-card-title">Preferências do Sistema</h2>
+                  <p className="lf-card-subtitle">
+                    Defina como períodos e horários devem aparecer para você.
+                  </p>
                 </div>
+              </div>
 
-                <div className="lf-settings-form-grid lf-settings-preferences-grid">
-                  <Field
-                    label="Período padrão"
-                    helper="Será usado como período inicial no Dashboard e nas telas de desempenho."
-                  >
-                    <Select
-                      value={preferences.defaultPeriodDays}
-                      onChange={(event) =>
-                        setPreferences((current) => ({
-                          ...current,
-                          defaultPeriodDays: Number(event.target.value),
-                        }))
-                      }
-                    >
-                      <option value={7}>7 dias</option>
-                      <option value={30}>30 dias</option>
-                      <option value={90}>90 dias</option>
-                      <option value={180}>180 dias</option>
-                      <option value={365}>365 dias</option>
-                    </Select>
-                  </Field>
-
-                  <Field
-                    label="Fuso horário"
-                    helper="Datas e horários serão exibidos conforme o fuso escolhido."
-                  >
-                    <Select
-                      value={preferences.timezone}
-                      onChange={(event) =>
-                        setPreferences((current) => ({
-                          ...current,
-                          timezone: event.target.value,
-                        }))
-                      }
-                    >
-                      <option value="America/Bahia">Bahia</option>
-                      <option value="America/Sao_Paulo">Brasília / São Paulo</option>
-                      <option value="America/Fortaleza">Fortaleza</option>
-                      <option value="America/Manaus">Manaus</option>
-                      <option value="America/Recife">Recife</option>
-                    </Select>
-                  </Field>
-                </div>
-
-                <div className="lf-settings-actions">
-                  <Button
-                    variant="secondary"
-                    disabled={!preferencesDirty}
-                    onClick={() =>
-                      setPreferences({
-                        defaultPeriodDays: data.defaultPeriodDays,
-                        timezone: data.timezone,
-                      })
+              <div className="lf-settings-form-grid lf-settings-preferences-grid">
+                <Field
+                  label="Período padrão"
+                  helper="Será usado como período inicial nas telas que utilizam filtros de período."
+                >
+                  <Select
+                    value={preferences.defaultPeriodDays}
+                    onChange={(event) =>
+                      setPreferences((current) => ({
+                        ...current,
+                        defaultPeriodDays: Number(event.target.value),
+                      }))
                     }
                   >
-                    Cancelar
-                  </Button>
-                  <Button
-                    disabled={!preferencesDirty || savingPreferences}
-                    onClick={savePreferences}
+                    <option value={7}>7 dias</option>
+                    <option value={30}>30 dias</option>
+                    <option value={90}>90 dias</option>
+                    <option value={180}>180 dias</option>
+                    <option value={365}>365 dias</option>
+                  </Select>
+                </Field>
+
+                <Field
+                  label="Fuso horário"
+                  helper="Datas e horários serão exibidos conforme o fuso escolhido."
+                >
+                  <Select
+                    value={preferences.timezone}
+                    onChange={(event) =>
+                      setPreferences((current) => ({
+                        ...current,
+                        timezone: event.target.value,
+                      }))
+                    }
                   >
-                    {savingPreferences ? 'Salvando...' : 'Salvar preferências'}
-                  </Button>
-                </div>
+                    <option value="America/Bahia">Bahia</option>
+                    <option value="America/Sao_Paulo">Brasília / São Paulo</option>
+                    <option value="America/Fortaleza">Fortaleza</option>
+                    <option value="America/Manaus">Manaus</option>
+                    <option value="America/Recife">Recife</option>
+                  </Select>
+                </Field>
+              </div>
+
+              <div className="lf-settings-actions">
+                <Button
+                  variant="secondary"
+                  disabled={!preferencesDirty}
+                  onClick={() =>
+                    setPreferences(
+                      isAdmin && data
+                        ? {
+                            defaultPeriodDays: data.defaultPeriodDays,
+                            timezone: data.timezone,
+                          }
+                        : {
+                            defaultPeriodDays: getDefaultPeriodDays(),
+                            timezone: getTimezone(),
+                          },
+                    )
+                  }
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  disabled={!preferencesDirty || savingPreferences}
+                  onClick={savePreferences}
+                >
+                  {savingPreferences ? 'Salvando...' : 'Salvar preferências'}
+                </Button>
+              </div>
               </section>
             </Card>
           )}

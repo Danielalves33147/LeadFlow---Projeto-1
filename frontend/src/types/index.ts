@@ -339,3 +339,8 @@ export interface PasswordChangeRequestResponse {
   maskedEmail: string;
   expiresInSeconds: number;
 }
+
+export interface PasswordResetRequestResponse {
+  message: string;
+  expiresInSeconds: number;
+}

@@ -249,11 +249,29 @@
 }
 
 .tasks-col-actions {
-  width: 56px;
+  width: 76px;
 }
 
-.tasks-actions-cell {
-  text-align: center;
+.tasks-table .tasks-actions-header,
+.tasks-table .tasks-actions-cell {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: center !important;
+}
+
+.tasks-task-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.tasks-task-row:hover {
+  background: #f8fafc;
+}
+
+.tasks-task-row:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+  background: #eff6ff;
 }
 
 .tasks-actions-trigger {
@@ -533,5 +551,72 @@
   .tasks-calendar .lf-calendar-event {
     font-size: 9px;
     padding: 1px 4px;
+  }
+}
+
+/* Vendedor não precisa dos filtros administrativos de responsável/filial. */
+.tasks-filter-grid-seller {
+  grid-template-columns:
+    minmax(170px, 1.2fr)
+    minmax(150px, 1fr)
+    minmax(145px, 0.9fr)
+    minmax(150px, 0.8fr);
+}
+
+.tasks-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tasks-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tasks-details-item {
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.tasks-details-item > span,
+.tasks-details-description > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tasks-details-item strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.tasks-details-description {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.tasks-details-description p {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .tasks-details-grid {
+    grid-template-columns: 1fr;
   }
 }

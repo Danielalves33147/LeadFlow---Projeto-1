@@ -19,6 +19,7 @@ import type {
   NotificationListResponse,
   PageResponse,
   PasswordChangeRequestResponse,
+  PasswordResetRequestResponse,
   RegisterResponse,
   MessageResponse,
   ScorePreviewResponse,
@@ -81,6 +82,10 @@ export function clearSession() {
 
 function accessToken() {
   return localStorage.getItem(ACCESS_KEY) ?? sessionStorage.getItem(ACCESS_KEY);
+}
+
+export function hasStoredSession() {
+  return Boolean(accessToken() || refreshToken());
 }
 
 function refreshToken() {
@@ -289,6 +294,30 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+
+  requestPasswordReset: (email: string) =>
+    request<PasswordResetRequestResponse>(
+      '/auth/password-reset/request',
+      { method: 'POST', body: JSON.stringify({ email }) },
+      false,
+      false,
+    ),
+
+  verifyPasswordReset: (payload: { email: string; token: string }) =>
+    request<MessageResponse>(
+      '/auth/password-reset/verify',
+      { method: 'POST', body: JSON.stringify(payload) },
+      false,
+      false,
+    ),
+
+  confirmPasswordReset: (payload: { email: string; token: string; newPassword: string }) =>
+    request<void>(
+      '/auth/password-reset/confirm',
+      { method: 'POST', body: JSON.stringify(payload) },
+      false,
+      false,
+    ),
 
   logout: async () => {
     const token = refreshToken();

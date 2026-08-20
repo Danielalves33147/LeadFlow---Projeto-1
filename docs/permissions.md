@@ -2,7 +2,7 @@
 
 | Área | Administrador | Gerente | Vendedor |
 |---|---|---|---|
-| Dashboard | visão da empresa | filiais autorizadas | próprio desempenho |
+| Dashboard | visão da empresa | filiais autorizadas | sem acesso |
 | Leads | todos da empresa | filiais autorizadas | próprios Leads |
 | Reatribuir Lead | sim | vendedores autorizados | não |
 | Interações | empresa | equipe/filiais | próprias |

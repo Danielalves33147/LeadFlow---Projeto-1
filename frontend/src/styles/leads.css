@@ -386,9 +386,9 @@
   text-align: center;
 }
 
-.lf-leads-last-heading,
-.lf-leads-last-cell {
-  text-align: center;
+.lf-leads-table .lf-leads-last-heading,
+.lf-leads-table .lf-leads-last-cell {
+  text-align: left !important;
 }
 
 .lf-leads-last-cell {
@@ -396,18 +396,19 @@
   white-space: nowrap;
 }
 
-.lf-leads-actions-column {
-  width: 48px;
+.lf-leads-col-actions {
+  width: 64px;
+}
+
+.lf-leads-table .lf-leads-actions-column,
+.lf-leads-table .lf-leads-actions-cell {
+  width: 64px;
   padding-left: 6px !important;
   padding-right: 6px !important;
-  text-align: center;
+  text-align: center !important;
 }
 
 .lf-leads-actions-cell {
-  width: 48px;
-  padding-left: 6px !important;
-  padding-right: 6px !important;
-  text-align: center;
   overflow: visible;
 }
 

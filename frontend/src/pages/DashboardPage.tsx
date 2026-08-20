@@ -16,10 +16,17 @@ export function DashboardPage() {
   const [days, setDays] = useState(() => getDefaultPeriodDays());
   const [newLead, setNewLead] = useState(false);
 
-  const range = useMemo(() => ({
-    from: new Date(Date.now() - days * 86400000).toISOString(),
-    to: new Date().toISOString()
-  }), [days]);
+  const range = useMemo(() => {
+    const to = new Date();
+    const from = new Date(to);
+    from.setHours(0, 0, 0, 0);
+    from.setDate(from.getDate() - (days - 1));
+
+    return {
+      from: from.toISOString(),
+      to: to.toISOString(),
+    };
+  }, [days]);
 
   const load = () => {
     setLoading(true);
@@ -88,7 +95,7 @@ export function DashboardPage() {
           <div className="lf-dashboard-stack">
             <section className="lf-dashboard-overview" aria-label="Resumo comercial">
               <div className="lf-kpi-grid lf-kpi-grid-compact">
-                <KpiCard label="Leads ativos" {...data.activeLeads} />
+                <KpiCard label="Leads ativos no período" {...data.activeLeads} />
                 <KpiCard label="Novos Leads" {...data.newLeads} />
                 <KpiCard label="Interações" {...data.interactions} />
                 <KpiCard label="Pontos gerados" {...data.generatedPoints} />
@@ -108,7 +115,7 @@ export function DashboardPage() {
                 <div className="lf-card-head">
                   <div>
                     <h2 className="lf-card-title">Leads por etapa</h2>
-                    <p className="lf-card-subtitle">Distribuição atual</p>
+                    <p className="lf-card-subtitle">Distribuição no período selecionado</p>
                   </div>
                 </div>
                 <DonutChart data={stages} />
@@ -150,7 +157,7 @@ export function DashboardPage() {
                 <div className="lf-card-head">
                   <div>
                     <h2 className="lf-card-title">Leads recentes</h2>
-                    <p className="lf-card-subtitle">Cadastros mais recentes no seu escopo</p>
+                    <p className="lf-card-subtitle">Cadastros mais recentes dentro do período selecionado</p>
                   </div>
                   <Button variant="tertiary" size="sm" onClick={() => nav('/leads')}>Ver todos os Leads</Button>
                 </div>

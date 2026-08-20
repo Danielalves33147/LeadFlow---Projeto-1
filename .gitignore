@@ -1,22 +1,30 @@
-# Backend
-backend/target/
-backend/.env
+DB_HOST=aws-0-ca-central-1.pooler.supabase.com
+DB_PORT=5432
+DB_NAME=postgres
+DB_USERNAME=postgres.lsbfjypvmsstcmeydluf
+DB_PASSWORD=b6KVU2hIne6COEUY
 
-*.class
+JWT_SECRET=replace-with-a-long-random-secret-of-at-least-32-characters
+JWT_EXPIRATION=900
+JWT_REFRESH_EXPIRATION=604800
 
-# Frontend
-frontend/node_modules/
-frontend/dist/
+CORS_ALLOWED_ORIGINS=http://localhost:5173
 
-# Variáveis e segredos
+DEMO_SEED=false
+SPRING.PROFILES.ACTIVE=dev
+
+FRONTEND_URL=http://localhost:5173
+EMAIL_VERIFICATION_EXPIRATION=86400
+
+INVITATION_EXPIRATION=86400
+
+EMAIL_MODE=smtp
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=daniel.s.alves@ba.estudante.senai.br
+MAIL_PASSWORD=syke tdya yrwo rrrf
+EMAIL_FROM=daniel.s.alves@ba.estudante.senai.brtarget/
+node_modules/
+dist/
 .env
-.env.*
-!.env.example
-
-# IDE
-.idea/
-.vscode/
-
-# Sistema
-.DS_Store
-Thumbs.db

@@ -30,4 +30,10 @@ public interface InteractionDAO extends JpaRepository<Interaction, Long>, JpaSpe
         @Param("from") Instant from,
         @Param("to") Instant to
     );
+    @Query("select coalesce(sum(i.scoreApplied),0) from Interaction i where i.responsibleUser.id = :userId and i.createdAt between :from and :to")
+    Long sumScoreAppliedByResponsibleUserBetween(
+        @Param("userId") Long userId,
+        @Param("from") Instant from,
+        @Param("to") Instant to
+    );
 }

@@ -1,0 +1,11 @@
+CREATE TABLE companies (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(160) NOT NULL,
+  cnpj VARCHAR(14) NOT NULL UNIQUE,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  default_period_days INTEGER NOT NULL DEFAULT 30 CHECK (default_period_days BETWEEN 7 AND 365),
+  compact_tables BOOLEAN NOT NULL DEFAULT TRUE,
+  timezone VARCHAR(80) NOT NULL DEFAULT 'America/Bahia',
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL
+);

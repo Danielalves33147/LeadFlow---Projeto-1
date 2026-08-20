@@ -14,4 +14,9 @@ public interface EmailService {
         UserInvitation invitation,
         String invitationUrl
     );
+
+    void sendPasswordChangeCode(
+        User user,
+        String code
+    );
 }

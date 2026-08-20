@@ -1100,7 +1100,7 @@ export function LeadsPage() {
                     <span className="lf-leads-score-axis">Pontuação</span>
                   </th>
                   <th className="lf-leads-last-heading">Última interação</th>
-                  <th className="lf-leads-actions-column" aria-label="Ações" />
+                  <th className="lf-leads-actions-column">Ação</th>
                 </tr>
               </thead>
 

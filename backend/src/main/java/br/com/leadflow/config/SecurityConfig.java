@@ -134,6 +134,9 @@ public class SecurityConfig {
                             "/api/v1/auth/logout",
                             "/api/v1/auth/verify-email",
                             "/api/v1/auth/resend-verification",
+                            "/api/v1/auth/password-reset/request",
+                            "/api/v1/auth/password-reset/verify",
+                            "/api/v1/auth/password-reset/confirm",
                             "/api/v1/auth/invitations/validate",
                             "/api/v1/auth/invitations/accept"
                         )

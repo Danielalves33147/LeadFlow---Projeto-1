@@ -6,13 +6,13 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import { authApi, clearSession, saveSession } from '../services/api';
+import { authApi, clearSession, hasStoredSession, saveSession } from '../services/api';
 import type { AuthUser, RegisterResponse } from '../types';
 
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string, remember: boolean) => Promise<void>;
+  login: (email: string, password: string, remember: boolean) => Promise<AuthUser>;
   register: (payload: Record<string, unknown>) => Promise<RegisterResponse>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
@@ -25,6 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!hasStoredSession()) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     authApi
       .me()
       .then(setUser)
@@ -43,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const auth = await authApi.login(email, password);
         saveSession(auth, remember);
         setUser(auth.user);
+        return auth.user;
       },
       register: async (payload) => authApi.register(payload),
       logout: async () => {

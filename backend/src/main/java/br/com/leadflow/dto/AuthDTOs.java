@@ -6,6 +6,7 @@ import br.com.leadflow.model.enums.UserStatus;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -71,6 +72,77 @@ public final class AuthDTOs {
     public record VerifyEmailRequest(
         @NotBlank
         String token
+    ) {
+    }
+
+    public record UpdateProfileRequest(
+        @NotBlank
+        @Size(min = 2, max = 120)
+        String name,
+
+        @NotBlank
+        @Email
+        @Size(max = 180)
+        String email
+    ) {
+    }
+
+    public record PasswordChangeConfirmRequest(
+        @NotBlank
+        @Pattern(regexp = "\\d{6}")
+        String token,
+
+        @NotBlank
+        @Size(min = 8, max = 72)
+        String newPassword
+    ) {
+    }
+
+    public record PasswordChangeRequestResponse(
+        String maskedEmail,
+        long expiresInSeconds
+    ) {
+    }
+
+    public record PasswordResetRequest(
+        @NotBlank
+        @Email
+        @Size(max = 180)
+        String email
+    ) {
+    }
+
+    public record PasswordResetVerifyRequest(
+        @NotBlank
+        @Email
+        @Size(max = 180)
+        String email,
+
+        @NotBlank
+        @Pattern(regexp = "\\d{6}")
+        String token
+    ) {
+    }
+
+    public record PasswordResetConfirmRequest(
+        @NotBlank
+        @Email
+        @Size(max = 180)
+        String email,
+
+        @NotBlank
+        @Pattern(regexp = "\\d{6}")
+        String token,
+
+        @NotBlank
+        @Size(min = 8, max = 72)
+        String newPassword
+    ) {
+    }
+
+    public record PasswordResetRequestResponse(
+        String message,
+        long expiresInSeconds
     ) {
     }
 

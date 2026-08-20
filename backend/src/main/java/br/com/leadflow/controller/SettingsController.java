@@ -1,6 +1,8 @@
 package br.com.leadflow.controller;
 
 import br.com.leadflow.dto.CommonDTOs.ApiResponse;
+import br.com.leadflow.dto.SettingsDTOs.UpdateCompanyRequest;
+import br.com.leadflow.dto.SettingsDTOs.UpdatePreferencesRequest;
 import br.com.leadflow.dto.SettingsDTOs.UpdateSettingsRequest;
 import br.com.leadflow.service.SettingsService;
 
@@ -30,5 +32,15 @@ public class SettingsController {
     @PutMapping
     public ApiResponse<?> update(@Valid @RequestBody UpdateSettingsRequest request) {
         return ApiResponse.of(service.update(request));
+    }
+
+    @PutMapping("/company")
+    public ApiResponse<?> updateCompany(@Valid @RequestBody UpdateCompanyRequest request) {
+        return ApiResponse.of(service.updateCompany(request));
+    }
+
+    @PutMapping("/preferences")
+    public ApiResponse<?> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request) {
+        return ApiResponse.of(service.updatePreferences(request));
     }
 }

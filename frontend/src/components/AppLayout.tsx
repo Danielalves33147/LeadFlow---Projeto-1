@@ -275,16 +275,18 @@ export function AppLayout() {
         </div>
 
         <nav className="lf-nav" aria-label="Navegação principal">
-          <NavLink
-            className={({ isActive }) =>
-              `lf-nav-item ${isActive ? 'active' : ''}`
-            }
-            to="/dashboard"
-            title={collapsed ? 'Dashboard' : undefined}
-          >
-            <span className="lf-nav-icon">▦</span>
-            <span className="lf-nav-label">Dashboard</span>
-          </NavLink>
+          {user.role !== 'SELLER' && (
+            <NavLink
+              className={({ isActive }) =>
+                `lf-nav-item ${isActive ? 'active' : ''}`
+              }
+              to="/dashboard"
+              title={collapsed ? 'Dashboard' : undefined}
+            >
+              <span className="lf-nav-icon">▦</span>
+              <span className="lf-nav-label">Dashboard</span>
+            </NavLink>
+          )}
 
           <div className="lf-nav-group-label">Operação comercial</div>
 

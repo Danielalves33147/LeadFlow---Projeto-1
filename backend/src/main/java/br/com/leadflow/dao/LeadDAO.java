@@ -19,8 +19,10 @@ public interface LeadDAO extends JpaRepository<Lead, Long>, JpaSpecificationExec
     long countByBranchCompanyIdAndCreatedAtBetween(Long companyId, Instant from, Instant to);
     long countByBranchIdAndStageNot(Long branchId, LeadStage stage);
     long countByBranchIdAndCreatedAtBetween(Long branchId, Instant from, Instant to);
+    long countByBranchIdAndStageNotAndCreatedAtBetween(Long branchId, LeadStage stage, Instant from, Instant to);
     long countByResponsibleUserIdAndStageNot(Long userId, LeadStage stage);
     long countByResponsibleUserIdAndCreatedAtBetween(Long userId, Instant from, Instant to);
+    long countByResponsibleUserIdAndStageAndCreatedAtBetween(Long userId, LeadStage stage, Instant from, Instant to);
     long countByResponsibleUserIdAndStage(Long userId, LeadStage stage);
     long countByBranchIdAndStage(Long branchId, LeadStage stage);
     List<Lead> findTop8ByBranchCompanyIdOrderByCreatedAtDesc(Long companyId);

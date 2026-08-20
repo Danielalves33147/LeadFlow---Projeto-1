@@ -693,8 +693,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const value = useMemo(() => ({ push }), [push]);
+
   return (
-    <ToastContext.Provider value={{ push }}>
+    <ToastContext.Provider value={value}>
       {children}
       <div className="lf-toast-stack" aria-live="polite">
         {items.map((toast) => (

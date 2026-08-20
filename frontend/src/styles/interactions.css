@@ -247,8 +247,10 @@
   width: 13%;
 }
 
-.interactions-score-cell {
-  text-align: center !important;
+.interactions-table .interactions-score-cell {
+  padding-left: 6px !important;
+  padding-right: 14px !important;
+  text-align: left !important;
   font-variant-numeric: tabular-nums;
 }
 

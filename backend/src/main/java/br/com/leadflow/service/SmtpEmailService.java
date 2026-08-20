@@ -94,4 +94,32 @@ public class SmtpEmailService implements EmailService {
 
         mailSender.send(message);
     }
+
+    @Override
+    public void sendPasswordChangeCode(
+        User user,
+        String code
+    ) {
+        SimpleMailMessage message =
+            new SimpleMailMessage();
+
+        message.setFrom(from);
+        message.setTo(user.getEmail());
+        message.setSubject(
+            "Código de segurança da sua senha no LeadFlow"
+        );
+
+        message.setText(
+            "Olá, "
+                + user.getName()
+                + "!\n\n"
+                + "Use o código abaixo para confirmar sua solicitação de senha:\n\n"
+                + code
+                + "\n\n"
+                + "O código expira em poucos minutos. Se você não solicitou alteração ou recuperação de senha, ignore esta mensagem.\n\n"
+                + "Equipe LeadFlow"
+        );
+
+        mailSender.send(message);
+    }
 }

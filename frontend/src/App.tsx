@@ -12,6 +12,7 @@ import { InteractionsPage } from './pages/InteractionsPage';
 import { LeadDetailsPage } from './pages/LeadDetailsPage';
 import { LeadsPage } from './pages/LeadsPage';
 import { LoginPage } from './pages/LoginPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { RankingPage } from './pages/RankingPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ScoreRulesPage } from './pages/ScoreRulesPage';
@@ -19,6 +20,28 @@ import { SettingsPage } from './pages/SettingsPage';
 import { TasksPage } from './pages/TasksPage';
 import { TeamPage } from './pages/TeamPage';
 import type { UserRole } from './types';
+
+
+function RoleHome() {
+  const { user } = useAuth();
+
+  return (
+    <Navigate
+      to={user?.role === 'SELLER' ? '/leads' : '/dashboard'}
+      replace
+    />
+  );
+}
+
+function DashboardRoute() {
+  const { user } = useAuth();
+
+  if (user?.role === 'SELLER') {
+    return <Navigate to="/leads" replace />;
+  }
+
+  return <DashboardPage />;
+}
 
 function Guard({
   roles,
@@ -66,6 +89,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
       <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
       <Route path="/ativar-conta" element={<ActivateAccountPage />} />
@@ -77,7 +101,7 @@ export default function App() {
           </Guard>
         }
       >
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<DashboardRoute />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/leads/funil" element={<FunnelPage />} />
         <Route path="/leads/:leadId" element={<LeadDetailsPage />} />
@@ -132,8 +156,8 @@ export default function App() {
         <Route path="/configuracoes" element={<SettingsPage />} />
       </Route>
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<RoleHome />} />
+      <Route path="*" element={<RoleHome />} />
     </Routes>
   );
 }

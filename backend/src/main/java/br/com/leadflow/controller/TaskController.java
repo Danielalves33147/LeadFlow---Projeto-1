@@ -40,11 +40,12 @@ public class TaskController {
         @RequestParam(required = false) Long leadId,
         @RequestParam(required = false) Long responsibleId,
         @RequestParam(required = false) TaskStatus status,
+        @RequestParam(required = false) String title,
         @RequestParam(required = false) Instant from,
         @RequestParam(required = false) Instant to,
         @PageableDefault(size = 50, sort = "dueAt") Pageable pageable
     ) {
-        return ApiResponse.of(service.list(branchId, leadId, responsibleId, status, from, to, pageable));
+        return ApiResponse.of(service.list(branchId, leadId, responsibleId, status, title, from, to, pageable));
     }
 
     @PostMapping

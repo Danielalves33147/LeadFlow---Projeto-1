@@ -48,10 +48,15 @@ export function RankingPage() {
     setLoading(true);
     setError('');
 
+    const to = new Date();
+    const from = new Date(to);
+    from.setHours(0, 0, 0, 0);
+    from.setDate(from.getDate() - (days - 1));
+
     rankingApi
       .get({
-        from: new Date(Date.now() - days * 86400000).toISOString(),
-        to: new Date().toISOString(),
+        from: from.toISOString(),
+        to: to.toISOString(),
       })
       .then(setItems)
       .catch((cause) => setError((cause as ApiError).message))
@@ -417,7 +422,7 @@ export function RankingPage() {
                       <th className="branch">Filial</th>
                       <th className="center">Pontos</th>
                       <th className="center">Interações</th>
-                      <th className="center">Leads ativos</th>
+                      <th className="center">Ativos no período</th>
                       <th className="center">Novos Leads</th>
                       <th className="center">Conversões</th>
                       <th className="center">Taxa</th>

@@ -76,4 +76,32 @@ public class ConsoleEmailService implements EmailService {
             "=========================================="
         );
     }
+
+    @Override
+    public void sendPasswordChangeCode(
+        User user,
+        String code
+    ) {
+        log.info(
+            "=========================================="
+        );
+
+        log.info(
+            "LEADFLOW - CÓDIGO DE SENHA"
+        );
+
+        log.info(
+            "Destinatário: {}",
+            user.getEmail()
+        );
+
+        log.info(
+            "Código: {}",
+            code
+        );
+
+        log.info(
+            "=========================================="
+        );
+    }
 }

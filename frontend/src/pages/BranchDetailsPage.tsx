@@ -31,9 +31,14 @@ export function BranchDetailsPage() {
     setLoading(true);
     setError('');
 
+    const to = new Date();
+    const from = new Date(to);
+    from.setHours(0, 0, 0, 0);
+    from.setDate(from.getDate() - (days - 1));
+
     const period = {
-      from: new Date(Date.now() - days * 86400000).toISOString(),
-      to: new Date().toISOString(),
+      from: from.toISOString(),
+      to: to.toISOString(),
     };
 
     branchApi
@@ -80,8 +85,8 @@ export function BranchDetailsPage() {
     ? data.points / data.activeLeads
     : 0;
 
-  const newLeadShare = data.activeLeads > 0
-    ? (data.newLeads / data.activeLeads) * 100
+  const activeLeadShare = data.newLeads > 0
+    ? (data.activeLeads / data.newLeads) * 100
     : 0;
 
   const breadcrumb = user?.role === 'ADMIN'
@@ -214,9 +219,9 @@ export function BranchDetailsPage() {
         <aside className="lf-branch-kpi-column" aria-label="Indicadores da filial">
           <Card className="lf-branch-kpi-card">
             <div className="lf-branch-kpi-primary">
-              <span className="lf-branch-kpi-label">Leads ativos</span>
+              <span className="lf-branch-kpi-label">Leads ativos no período</span>
               <strong>{fmtNumber(data.activeLeads)}</strong>
-              <small>Base comercial ativa</small>
+              <small>Leads do período que permanecem ativos</small>
             </div>
             <div className="lf-branch-kpi-details">
               <div>
@@ -234,11 +239,11 @@ export function BranchDetailsPage() {
             <div className="lf-branch-kpi-primary">
               <span className="lf-branch-kpi-label">Novos Leads</span>
               <strong>{fmtNumber(data.newLeads)}</strong>
-              <small>{decimalFormatter.format(newLeadShare)}% da base ativa</small>
+              <small>{decimalFormatter.format(activeLeadShare)}% dos novos Leads seguem ativos</small>
             </div>
             <div className="lf-branch-kpi-details">
               <div>
-                <span>Base ativa</span>
+                <span>Ativos no período</span>
                 <strong>{fmtNumber(data.activeLeads)}</strong>
               </div>
               <div>
@@ -296,7 +301,7 @@ export function BranchDetailsPage() {
                 <strong>{fmtNumber(data.newLeads)}</strong>
               </div>
               <div>
-                <span>Leads ativos</span>
+                <span>Ativos no período</span>
                 <strong>{fmtNumber(data.activeLeads)}</strong>
               </div>
             </div>

@@ -58,7 +58,7 @@ public class RankingService {
         for (Branch b : branches) {
             List<Lead> all = leadDAO.findByBranchIdOrderByCreatedAtDesc(b.getId());
             long active = all.stream()
-                .filter(l -> l.getStage() != LeadStage.LOST)
+                .filter(l -> l.getStage() != LeadStage.LOST && within(l.getCreatedAt(), start, end))
                 .count();
             long news = all.stream()
                 .filter(l -> within(l.getCreatedAt(), start, end))
