@@ -1,9 +1,0 @@
-spring:
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-logging:
-  level:
-    br.com.leadflow: DEBUG
-    org.hibernate.SQL: INFO
